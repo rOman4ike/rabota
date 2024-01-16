@@ -3,9 +3,7 @@
 Ошибки
 1. Для каждого хтмл сделать ксс и превью
 5. Привести к одному стилю написания, например в правилах блоков ты пишешь: "Внутри одних блоков могут быть сколько угодно блоков", а в правилах элементов: "Могут вкладываться друг в друга", хотя имеешь в виду одно и то же
-8. Разберем блок menu block ИЗ ПРИМЕРА В ТЕМЕ О БЛОКАХ (ССЫЛКА). И также хотелось бы хтмл и ксс видеть, по картинке не понятно как код писать
 9. Виды модификаторов - тоже нужны примеры целиковых модификаторов
-11. Для примера по модификатором тоже надо хтмл ксс
 
 ## Содержание
 - [Что такое БЭМ](#what-bem)
@@ -84,6 +82,60 @@
 
 <img src="./bem-block-example.png" style="width: 70%">
 
+<br>
+<details>
+  <summary>
+    HTML
+  </summary>
+
+  ```
+  <header class="header">
+    <div class="header__inner">
+
+      <div class="header__top">
+        <nav class="menu">
+          <ul class="menu__list">
+            <li class="menu__list-item">
+              <a href="#" class="menu__link">Tab 1</a>
+            </li>
+            <li class="menu__list-item">
+              <a href="#" class="menu__link">Tab 2</a>
+            </li>
+            <li class="menu__list-item">
+              <a href="#" class="menu__link">Tab 3</a>
+            </li>
+            <li class="menu__list-item">
+              <a href="#" class="menu__link">Tab 4</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="header__bottom">
+        <div class="logo">
+          <img src="#" class="logo__img">
+        </div>
+
+        <div class="search">
+          <form class="search__form">
+            <input type="search" class="search__input">
+          </form>
+        </div>
+
+        <div class="auth">
+          <form class="auth__form">
+            <input type="text" class="auth__input">
+            <input type="password" class="auth__input">
+            <button class="auth__btn">sign in</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </header>
+  ```
+</details>
+
 Здесь имеются 5 блоков:
 - menu block;
 - search block;
@@ -148,9 +200,33 @@
 ```
 
 ### Пример
-Разберем блок menu block из [предыдущего примера](#header-example).
+Разберем блок menu block из [примера блока](#header-example).
 
 <img src="./bem-element-example.png" style="width: 70%">
+
+<br>
+<details>
+  <summary>HTML</summary>
+
+  ```
+  <nav class="menu">
+    <ul class="menu__list">
+      <li class="menu__list-item">
+        <a href="#" class="menu__link">Tab 1</a>
+      </li>
+      <li class="menu__list-item">
+        <a href="#" class="menu__link">Tab 2</a>
+      </li>
+      <li class="menu__list-item">
+        <a href="#" class="menu__link">Tab 3</a>
+      </li>
+      <li class="menu__list-item">
+        <a href="#" class="menu__link">Tab 4</a>
+      </li>
+    </ul>
+  </nav>
+  ```
+</details>
 
 Здесь имеются 4 элемента
 
@@ -214,9 +290,43 @@
 - Текст состояния (блок), у которого может быть несколько цветов (модификаторы)
 
 ### Пример
-Разберем блок menu block из [предыдущего примера](#header-example). Он находится в шапке (сверху) и в подвале (снизу) страницы.
+Разберем блок menu block из [примера блока](#header-example). Он находится в шапке (сверху) и в подвале (снизу) страницы.
 
 <img src="./bem-modifier-example.png" style="width: 70%">
+
+<br>
+<details>
+  <summary>HTML (menu в подвале)</summary>
+
+  ```
+  <footer class="footer">
+    <div class="footer__inner">
+
+      <nav class="menu menu--theme-smooth">
+        <ul class="menu__list">
+          <li class="menu__list-item">
+            <a href="#" class="menu__link">Tab 1</a>
+          </li>
+          <li class="menu__list-item">
+            <a href="#" class="menu__link">Tab 2</a>
+          </li>
+          <li class="menu__list-item">
+            <a href="#" class="menu__link">Tab 3</a>
+          </li>
+          <li class="menu__list-item">
+            <a href="#" class="menu__link">Tab 4</a>
+          </li>
+        </ul>
+      </nav>
+
+      <small class="footer__copyright">
+        © 2022 Company
+      </small>
+
+    </div>
+  </footer>
+  ```
+</details>
 
 Внешний вид верхнего и нижнего меню заметно отличается.
 
