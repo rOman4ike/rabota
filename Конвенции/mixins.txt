@@ -1,0 +1,19 @@
+Использование миксина эквивалентно копированию и вставке кода из одного места в другое, а мы не хотим иметь дублирующийся код повсюду.
+
+ВАЖНО!
+Мы должны использовать миксин только в том случае, если используется аргумент
+
+```scss
+@mixin primary-title ($fontSize) {
+  font-family: Quicksand;
+  font-weight: 600;
+  font-size: $fontSize;
+}
+
+.blog-title {
+  @include primary-title(15px);
+}
+.page-title {
+  @include primary-title(19px);
+}
+```

@@ -1,0 +1,68 @@
+Использование computed для фильтрации элементов:
+But don't use index as the key!
+Если же в качестве ключа использовать индекс, то порядок ключей никогда не изменится, поскольку индекс всегда увеличивается последовательно.
+  <ul>
+    <li v-for="(item, index) in itemsLessThanTen" v-bind:key="item.name"
+      # :key="index" - неправильно
+    >
+      {{ item.name }} - {{ item.price }}
+    </li>
+  </ul>
+
+  computed: {
+    itemsLessThanTen: function() {
+      return this.shoppingItems.filter(function(item) {
+        return item.price < 10;
+      })
+    }
+  }
+
+Avoid use v-if in loops:
+  Хотя это кажется интуитивно понятным, это может вызвать проблемы с производительностью, поскольку Vue отдает приоритет
+    директиве v-for над директивой v-if.
+
+Vuex getters:
+  Геттеры используются в тех случаях, когда нужно вывести модифицированную информацию из хранилища (например список всех прочитанных книг).
+
+
+Routes:
+  1.
+
+
+Emit:
+  Для именования пользовательских событий рекомендуется всегда использовать kebab-case.
+  Не рекомендуется использовать CamelCase для именования событий.
+
+  Всегда используй свойтсво emit в компонентах
+
+Side effects inside computed properties:
+  computed: {
+    reversedArray() {
+      return this.array.reverse(); // SIDE EFFECT - mutates a data property
+    }
+  }
+  If we try to display the array and the reversedArray , you’ll notice that both arrays have the same values
+    original array: [ 3, 2, 1 ]
+    computed array: [ 3, 2, 1 ]
+
+Attr:
+  https://laracasts.com/discuss/channels/vue/vuex-best-practice-to-avoid-declaring-all-my-propreties?page=1&replyId=765845
+
+???:
+  Object/Array must use a factory function to return the default value. - почему?
+
+  Так нельзя:
+    linkList: {
+      type: Array,
+      required: false,
+      default: []
+    }
+
+  Так можно:
+    linkList: {
+      type: Array,
+      required: false,
+      default: () => {
+        return []
+      }
+    }

@@ -1,0 +1,66 @@
+Лексическое окружение - это переменные, которые определены и "видны" функции.
+Контекст – это this.
+Скоуп (Область видимости) - это переменные которые доступны из другой функции и они берутся из замыкания.
+Замыкание – это функция, которая запоминает свои внешние переменные и может получить к ним доступ. В JavaScript, все функции изначально являются замыканиями (есть только одно исключение, про которое будет рассказано в Синтаксис "new Function").
+
+
+Первое, что сделает движок JavaScript - создаст глобальный контекст выполнения, и тем самым даст нам две вещи: глобальный объект (global object), и ключевое слово this.
+
+В браузере глобальный объект и this являются window.
+	window === this // true
+Если мы используем что-то вроде NodeJS, глобальный объект не будет window. Вместо этого он будет называться global.
+
+Потеря контекста выполнения:
+	let user = {
+		firstName: "Вася",
+		sayHi() {
+		  alert(`Привет, ${this.firstName}!`);
+		}
+	};
+
+	setTimeout(user.sayHi, 1000); // Привет, undefined!
+	
+	Решение 1: сделать функцию-обёртку
+		Самый простой вариант решения – это обернуть вызов в анонимную функцию, создав замыкание:
+			setTimeout(function() {
+				user.sayHi(); // Привет, Вася!
+			}, 1000);
+		
+		Но что произойдёт, если до момента срабатывания setTimeout (ведь задержка составляет целую секунду!) в переменную user будет записано другое значение?
+			setTimeout(() => user.sayHi(), 1000);
+			// ...в течение 1 секунды
+			user = { sayHi() { alert("Другой пользователь в 'setTimeout'!"); } };
+			// Другой пользователь в 'setTimeout'!
+	
+	Решение 2: привязать контекст с помощью bind
+	
+CAB:
+var car = { 
+    registrationNumber: "GA12345",
+    brand: "Toyota",
+
+    displayDetails: function(ownerName){
+        console.log(ownerName + ", this is your car: " + this.registrationNumber + " " + this.brand);
+    }
+}
+
+bind:
+	Метод 'bind()' создает новую функцию, где 'this' относится к параметру в круглой скобке, в приведенном выше случае "car".
+	var myCarDetails = car.displayDetails.bind(car, "Vivian") # car = this, "Vivian" - ownerName
+
+
+call, apply:
+	На этот раз имеется объект 'car' без функции displayDetails, которая находится в глобальном контексте.
+		var car = { 
+				registrationNumber: "GA12345",
+				марка: "Toyota"
+		}
+
+		function displayDetails(ownerName) {
+			 console.log(ownerName + ", это ваш автомобиль: " + this.registrationNumber + " " + this.brand);
+		}
+		
+	Мы можем использовать функцию 'apply()':
+		displayDetails.apply(car, ["Vivian"])
+	Или
+		displayDetails.call(car, "Vivian")

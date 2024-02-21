@@ -1,0 +1,11 @@
+
+FrontEnd:
+1. Кэширование браузера
+2. ServiceWorker, WebWorkers
+3. Lazy loading - ???
+4. Dymanic import
+5. Если есть package.json, посмотреть какие пакеты подключены
+
+
+???
+1. OSS Tools

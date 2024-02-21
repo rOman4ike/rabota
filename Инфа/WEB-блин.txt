@@ -1,0 +1,4 @@
+Вопросы:
+	1. js stack crawl
+	2. Lazy loading
+	3. https://dev.to/aseder/keeping-up-with-the-constant-catching-up-in-frontend-engineering-376o

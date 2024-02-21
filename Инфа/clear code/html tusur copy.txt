@@ -1,0 +1,344 @@
+https://ru.bem.info/methodology/css/
+https://andrew-barnes.medium.com/bem-css-tip-dealing-with-grandchild-elements-d7378b51e722
+# Пока не разобрал
+https://openclassrooms.com/en/courses/5625786-produce-maintainable-css-with-sass/6009176-use-bem-selectors-with-sass
+
+БЭМ Стили:
+  В БЭМ не используют 'селекторы тегов' и 'идентификаторов'.
+  Стили блоков и элементов описываются через 'селекторы классов'.
+
+  Совмещение тега и класса в селекторе
+    Методология БЭМ не рекомендует совмещать теги и классы в селекторе.
+    Объединение тега и класса (например, button.button) повышает специфичность CSS-правил,
+    что усложняет задачу их переопределения.
+
+      <button class="button button--active">...</button>
+
+    Селектор:
+
+      button.button--active
+
+    Более специфичен чем:
+
+      .button {}
+      .button_active {}
+
+  Вложенные селекторы
+    Методология БЭМ допускает использование вложенных селекторов, но рекомендует свести их применение к минимуму.
+    При использовании вложенных селекторов важно соблюдать принцип инкапсуляции: правила одного блока не должны влиять на внутренний мир другого блока.
+
+    Вложенность уместна, если необходимо изменить стили элементов в зависимости от модификатора
+      .button_hovered .button__text
+        text-decoration: underline
+
+      .button_theme_islands .button__text
+        line-height: 1.5
+
+  Комбинированные селекторы
+    Методология БЭМ не рекомендует использовать комбинированные селекторы.
+    Комбинированные селекторы (например, .button.button_theme_islands) имеют более высокую специфичность,
+    чем одиночные селекторы, что усложняет задачу их переопределения.
+
+  Именование
+    Имя селектора должно полно и точно описывать представляемую им БЭМ-сущность.
+      .button {}
+      .icon {}
+      .text {}
+      .theme_islands {}
+
+  Модификаторы
+    Модификаторами в БЭМ задают блокам внешний вид, состояние и поведение.
+    Изменение оформления блока производится при помощи установки/снятия модификатора.
+
+    button--size-xl
+    button--primary
+    button--danger
+    button--active
+
+  Стилизация групп блоков
+    Иногда необходимо применить одинаковое форматирование сразу к нескольким различным HTML-элементам веб-страницы.
+    Обычно для решения подобных задач применяют групповые селекторы.
+
+      <article class="article">...</article>
+
+      <footer class="footer">
+          <div class="copyright">...</div>
+      </footer>
+
+      .article, .footer div {
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          color: #000;
+      }
+
+    Однако лучше использовать миксы
+
+      <article class="article text">...</article>
+
+      <footer class="footer">
+          <div class="copyright text">...</div>
+      </footer>
+      CSS-реализация:
+
+      .text {
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          color: #000;
+      }
+
+  Принцип единственной ответственности
+    Как и в объектно-ориентированном программировании, принцип единственной ответственности
+    (англ. Single responsibility principle) в CSS по БЭМ означает, что каждая CSS-реализация должна иметь одну
+    ответственность.
+
+    Пример
+
+      <header class="header">
+        <button class="button header__button">...</button>
+      </header>
+
+      .button {
+        font-family: Arial, sans-serif;
+        border: 1px solid black;
+        background: #fff;
+      }
+
+    Ответственность: внешняя геометрия и позиционирование
+    (зададим внешнюю геометрию и позиционирование для блока button через элемент header__button).
+
+    Верно:
+
+      .header__button {
+        margin: 30px;
+        position: relative;
+      }
+
+    Неверно:
+
+      .header__button {
+        font-family: Arial, sans-serif;
+        position: relative;
+        border: 1px solid black;
+        margin: 30px;
+      }
+
+    Селекторы с одиночной ответственностью придают коду больше гибкости.
+
+  Принцип открытости/закрытости
+    Любой HTML-элемент страницы должен быть открыт для модификации, но закрыт для изменения.
+    Разрабатывать новые CSS-реализации следует так, чтобы не пришлось менять уже существующие.
+    Пример
+
+      <button class="button">...</button>
+      <button class="button">...</button>
+
+      .button {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        font-size: 11px;
+        line-height: 20px;
+      }
+
+    Предположим, что появилась необходимость изменить размер одной из кнопок.
+    Следуя принципу открытости/закрытости, модифицируем кнопку.
+
+      <button class="button">...</button>
+      <button class="button button_size_s">...</button>
+
+      .button {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        font-size: 11px;
+        line-height: 20px;
+      }
+
+      .button--size-s {
+        font-size: 13px;
+        line-height: 24px;
+      }
+
+    Существующая функциональность кнопки расширена при помощи класса button_size_s
+    (переопределены свойства font-size и line-height).
+    Теперь на странице есть две кнопки разного размера.
+
+    Нарушение принципа открытости/закрытости
+      1. Изменение существующей CSS-реализации
+
+        .button {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          font-size: 13px;
+          line-height: 24px;
+        }
+
+      Текущая CSS-реализация кнопки должна быть закрыта для редактирования. Изменения коснутся всех блоков button.
+
+      2. Модификация контекстом
+
+        .button {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          font-size: 11px;
+          line-height: 20px;
+        }
+
+        .content .button {
+          font-size: 13px;
+          line-height: 24px;
+        }
+
+      Оформление кнопки стало зависеть от ее расположения.
+      Изменения коснутся всех блоков button внутри блока content.
+
+    Sass:
+      Когда вы вставляете амперсанд (&), он соединяет родительский и дочерний элементы вместе в скомпилированном CSS не добавляя лишней специфичности.
+
+      .block
+        background-color: #15DEA5
+
+        &__element
+          color: #fff
+
+          &--modifier
+            background-color: #001534
+
+      При компиляции получится следующее
+
+      .block {
+        background-color: #15DEA5;
+      }
+      .block__element {
+        color: #fff;
+      }
+      .block__element--modifier {
+        background-color: #001534;
+      }
+
+    Повышение спечифичности:
+      Повышение специфичности не всегда плохо и иногда им нужно пользоваться
+      Допустим, мы создали кнопку со сплошным фоном, а также модифицированную кнопку с прозрачным фоном и сплошной рамкой
+
+        .btn
+          display: inline-block
+          margin: 0 auto
+          background: #15DEA5
+          padding: 1rem
+
+          &--outline
+            background: transparent
+            border: 2px solid #15DEA5
+
+      Чтобы изобразить отключенную кнопку, нужно сделать ее серой, а значит, создать еще один модификатор.
+      В случае со стандартной кнопкой это означает серый цвет фона, а для кнопки с контуром - серый цвет границы.
+      Можно создать два новых модификатора, что загромоздит наш код.
+      Но лучше написать один модификатор для обоих:
+
+        .btn
+          display: inline-block
+          margin: 0 auto
+          background: #15DEA5
+          padding: 1rem
+
+          &--disabled
+            background: grey
+
+          &--outline
+            background: transparent
+            border: 2px solid #15DEA5
+
+            &.btn--disabled
+              border: 2px solid grey
+
+      Скомпилируется в следующий код:
+
+        .btn {
+          display: inline-block;
+          margin: 0 auto;
+          background: #15DEA5;
+          padding: 1rem;
+        }
+        .btn--disabled {
+          background: grey;
+        }
+        .btn--outline {
+          background: transparent;
+          border: 2px solid #15DEA5;
+        }
+        .btn--outline.btn--disabled {
+          border: 2px solid grey;
+        }
+
+
+  best practice:
+    1. Каждый блок (стили) должен находиться в отдельном файле
+
+    2. Most wrong syntax
+      Wrong example
+
+      .product-item {
+        // Actually, it's not about syntax.
+        // But don't forget, this is bad way
+        font-size: 14px; // if really needed at least convert it to `em`
+
+        &--title {
+          font-size: 2em;
+
+          &-secondary { // never do this, impossible to debug
+            font-size: 1.3em;
+          }
+        }
+      }
+
+      Correct example
+
+      .product-item {
+        &--title {
+          font-size: 2em;
+        }
+
+        &--title-secondary {
+          font-size: 1.3em;
+        }
+      }
+
+  Примеры:
+    <!-- HTML -->
+    <div class="block block--modifier">
+      <div>
+        <div>
+
+          <!-- GOOD -->
+          <div class="block__element">
+          </div>
+
+          <!-- GOOD -->
+          <div class="block__another-element">
+          </div>
+
+          <!-- GOOD -->
+          <div class="block__element--modifier">
+          </div>
+
+          <!-- GOOD -->
+          <div class="block__element--another-modifier">
+          </div>
+
+          <!-- KINDA LONG BUT VALID BEM -->
+          <div class="block__element-with-a-long-name">
+          </div>
+
+          <!-- BAD -->
+          <div class="block__element__element__element">
+          </div>
+
+          <!-- BAD -->
+          <div class="block__element--modifier__another-element">
+          </div>
+
+          <!-- BAD -->
+          <div class="block__element--modifier--something-else">
+          </div>
+
+        </div>
+      </div>
+    </div>

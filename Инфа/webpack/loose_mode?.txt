@@ -1,0 +1,2 @@
+https://2ality.com/2015/12/babel6-loose-mode.html
+https://dev.to/wojtekmaj/optimizing-react-app-hardcore-edition-2h1

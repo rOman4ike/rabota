@@ -1,0 +1,176 @@
+Development:
+
+  Choosing a Development Tool:
+    "Важно!":
+      Некоторые текстовые редакторы имеют функцию «безопасной записи», которая может мешать работе некоторых из следующих инструментов.
+      Прочтите "Adjusting Your Text Editor", чтобы узнать, как решить эти проблемы.
+
+    Очень быстро становится затруднительно вручную запускать сборку npm run каждый раз, когда вы хотите скомпилировать код.
+    В webpack есть несколько различных опций, которые помогут вам автоматически компилировать код при каждом его изменении:
+      webpack's Watch Mode
+      webpack-dev-server
+      webpack-dev-middleware
+
+    Using Watch Mode:
+      Вы можете поручить веб-пакету «смотреть» все файлы в вашем dependency graph на предмет изменений.
+      Если один из этих файлов будет обновлен, код будет перекомпилирован, поэтому вам не придется запускать полную сборку вручную.
+      package.json
+        "scripts": {
+          "watch": "webpack --watch",
+        },
+      Единственным недостатком является то, что вам придется обновить браузер, чтобы увидеть изменения.
+
+    Using webpack-dev-server:
+      Webpack-dev-server предоставляет вам элементарный веб-сервер и
+      возможность использовать "live reloading": "npm install --save-dev webpack-dev-server"
+
+      webpack.config.js
+        devServer: {
+          static: './dist',
+        },
+        optimization: {
+          runtimeChunk: 'single',
+        },
+      Это сообщает webpack-dev-serverу обслуживать файлы из каталога dist на локальном хосте: 8080.
+
+      "Важно!":
+        Оптимизация.runtimeChunk: 'single' был добавлен, поскольку в этом примере на одной HTML-странице имеется более одной entry points
+        Прочтите главу "Code Splitting" для получения более подробной информации.
+
+        Проблемы более одного Entry Point (дада, это в важно):
+          Независимо от того, извлечен ли он или встроен, важно, чтобы экземпляр модуля никогда не создавался несколько раз —
+          как модули ECMAScript, так и модули CommonJS.
+
+          Эта гарантия позволяет использовать module's top-level scope для глобального состояния,
+          совместно используемого для всех случаев использования этого модуля.
+          Многие библиотеки полагаются на это предположение для реализации важных сквозных задач, таких как мемоизация, очереди и реестры плагинов.
+
+          Пример:
+            index.html
+              <!DOCTYPE html>
+              <script src="component-1.js"></script>
+              <script src="component-2.js"></script>
+
+            component-1.js
+              import obj from './obj.js';
+              obj.count++;
+              console.log('component-1', obj.count);
+
+            component-2.js
+              import obj from './obj.js';
+              obj.count++;
+              console.log('component-2', obj.count);
+
+            obj.js
+              export default { count: 0 };
+
+            Если модули правильно создаются только один раз, оба входных модуля получают ссылку на один и тот же объект,
+            экспортированный общим модулем, а свойство .count этого объекта увеличивается дважды, в результате чего его
+            значение становится равным 2.
+
+            Однако, если общий модуль зависимостей создается отдельно каждым пакетом записей, каждый из них будет увеличивать
+            свое собственное свойство .count, и результатом будут два объекта, каждый со значением счетчика 1.
+
+      "Важно!":
+        webpack-dev-server обслуживает связанные файлы из каталога, определенного в output path, т. е.
+        файлы будут доступны по адресу http://[devServer.host]:[devServer.port]/[output.publicPath]/[output.filename].
+
+      "Важно!":
+        webpack-dev-server не записывает output files после компиляции.
+        Вместо этого он сохраняет файлы пакета в памяти и обслуживает их, как если бы они были реальными файлами,
+        смонтированными по корневому пути сервера.
+        Вы можете изменить это с помощью параметра devMiddleware.publicPath в dev server's configuration.
+
+      package.json
+        "scripts": {
+          "start": "webpack serve --open",
+        },
+
+      Если вы теперь измените какой-либо исходный файл и сохраните его, веб-сервер автоматически перезагрузится после компиляции кода.
+
+    Using webpack-dev-middleware:
+      "webpack-dev-middleware" — это оболочка, которая отправляет файлы, обработанные webpack, на сервер.
+      Он используется внутри webpack-dev-server, однако он доступен как отдельный пакет, чтобы при желании можно было выполнить дополнительные настройки.
+
+      Нам нужно внести некоторые изменения в файл конфигурации нашего веб-пакета
+      webpack.config.js
+        output: {
+          publicPath: '/',
+        },
+
+      Теперь добавьте скрипт npm, чтобы немного упростить запуск сервера:
+      package.json
+        "scripts": {
+          "server": "node server.js",
+        },
+
+Shimming:
+  Loading Polyfills:
+    Существует множество способов загрузки полифиллов. Например, чтобы включить полифилл babel-polyfill, мы можем сделать следующее:
+      npm install --save babel-polyfill
+    и импортировать его, чтобы включить в наш main bundle:
+    src/index.js
+      import 'babel-polyfill';
+
+    "ВАЖНО!":
+      Обратите внимание, что мы не привязываем импорт к переменной. Это связано с тем, что полифиллы просто работают сами по себе
+      Позволяя нам предполагать наличие определенной нативной функциональности.
+
+    Обратите внимание, что в этом подходе приоритет отдается корректности, а не размеру пакета.
+    Чтобы быть безопасными и надежными, полифиллы/шимы должны запускаться раньше всего остального кода, а значит,
+    либо должны загружаться синхронно, либо весь код приложения должен загружаться после загрузки всех полифиллов/шимов.
+
+    В сообществе также существует множество заблуждений, что современные браузеры "не нуждаются" в полифиллах,
+    или что полифиллы/шимы служат только для добавления недостающих функций - на самом деле, они часто исправляют сломанные
+    реализации даже в самых современных браузерах.
+
+  Further Optimizations:
+    Пакет babel-preset-env использует browserslist для транспонирования только того, что не поддерживается в матрице ваших браузеров.
+    Этот пресет поставляется с опцией useBuiltIns, по умолчанию false, которая преобразует глобальный импорт babel-polyfill в
+    более детализированный импорт по функциям:
+
+# А?
+  0. Для всего посмотреть use cases и best practise
+  1. https://webpack.js.org/plugins/mini-css-extract-plugin/#minimizing-for-production (Минимизация CSS)
+  2. Что такое Asset Module?
+  3. webpack parser
+  4. HtmlWebpackPlugin
+  5. Manifest и WebpackManifestPlugin
+  6. Source maps, inline-source-map
+  7. webpack's Watch Mode, webpack-dev-server, webpack-dev-middleware
+  8. devMiddleware.publicPath
+  9. webpack-dev-server - https://webpack.js.org/configuration/dev-server/
+  10. Code splitting: Prevent Duplication
+  11. Chunk
+  12. module's top-level scope
+  13. мемоизация (memoization), очереди (queues) и реестры плагинов (plugin registries)
+  14.
+      Хотя в webpack разрешено использование нескольких entry points на страницу, по возможности следует избегать этого
+      в пользу точки входа с несколькими импортами: entry: { page: ['./analytics', './app'] }.
+      Это приводит к лучшей оптимизации и единообразному порядку выполнения при использовании тегов асинхронного сценария.
+
+      Что такое entry: { page: ['./analytics', './app'] }
+  15. SplitChunksPlugin
+  16. mini-css-extract-plugin
+  17. transpiled imports
+  18. https://medium.com/webpack/webpack-4-import-and-commonjs-d619d626b655
+  19. prefetching and preloading
+  20. Webpack: prefetch
+  21. Bundle Analysis
+  22. Resource hint
+  23. /* webpackChunkName: "print" */
+  24. vendor chunk
+  25. Module Identifiers
+  26. Build Performance
+  27. nonce
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce
+  28. CSP (Content Security Policies)
+  29. Hot Module Replacement
+  30. Tree Shaking (use cases, best practise)
+  30. Tree Shaking - побочные эффекты
+  31. harmony modules js
+  32. production, environment split logic into files
+  33. Полифилы
+  34. shimming
+  35. publicPath - use cases
+  36. Asset Modules - плюсы/минусы по сравнению с plugins

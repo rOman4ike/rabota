@@ -1,0 +1,69 @@
+https://codeguide.co/#attribute-order
+
+HTML:
+
+  1. Syntax
+    - Используйте программные табуляции с двумя пробелами
+    - Всегда используйте для атрибутов двойные кавычки, а не одинарные.
+
+  2. Attribute order
+    Атрибуты HTML должны располагаться именно в этом порядке, чтобы облегчить чтение кода.
+      - class
+      - id, name
+      - data-*
+      - src, for, type, href, value
+      - title, alt
+      - role, aria-*
+      - tabindex
+      - style
+
+  3. Reduce markup
+    По возможности избегайте лишних родительских элементов при написании HTML.
+      <!-- Not so great -->
+      <span class="avatar">
+        <img src="...">
+      </span>
+
+      <!-- Better -->
+      <img class="avatar" src="...">
+
+  4.
+
+CSS:
+
+  1. Syntax
+    - Используйте программные табуляции с двумя пробелами
+    - При группировке селекторов размещайте отдельные селекторы в одной строке.
+      .selector,
+      .selector-secondary,
+      .selector[type="text"] {
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: rgb(0 0 0 / .5);
+        box-shadow: 0 1px 2px #ccc, inset 0 1px 0 #fff;
+      }
+    - Включите один пробел перед открывающей скобкой блоков объявлений для удобства чтения.
+    - Размещайте закрывающие скобки блоков объявлений на новой строке.
+    - Значения свойств, разделенных запятыми, должны включать пробел после каждой запятой (например, box-shadow).
+    - Все шестнадцатеричные значения записывайте строчными буквами, например #fff. (ЗАЧЕМ?)
+
+  2. Declaration order
+    https://gist.github.com/awkale/ad46e2ade70e833fa178
+    https://9elements.com/css-rule-order/
+
+  3. Logical properties
+    https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values
+    https://css-tricks.com/css-logical-properties-and-values/
+    https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Writing_Modes
+
+  4. Media query placement
+    По возможности размещайте медиа-запросы как можно ближе к соответствующим наборам правил. (Не внутри CSS-правил!)
+      .element { ... }
+      .element-avatar { ... }
+      .element-selected { ... }
+
+      @media (min-width: 480px) {
+        .element { ... }
+        .element-avatar { ... }
+        .element-selected { ... }
+      }

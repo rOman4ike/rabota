@@ -1,0 +1,179 @@
+Сборку проекта мы пишем единожды, и используем из проекта в проект
+
+Точка входа - это где мы подключаем все скрипты и весь код
+
+webpack-dev-server - хранит все данные в памяти (не создает папку в проекте)
+
+babel - нужен для того, чтобы мы например писали на ES7 синтаксисе, и он его компилирует в ES4
+
+webpack подключает все файлы, которые мы подключаем, поэтому мы закидываем в exclude: '/node_modules/' (99% библиотек уже перегнали в условный ES5)
+
+Как подключать библиотеку:
+  1. import 'vue'
+  2. import Vue from 'vue'
+  3. window.Vue = require('vue')
+
+Как подключить только стили или js в bootstrap:
+  1. import 'bootstrap/dist/css/bootstrap.min.css'
+
+Как работает import 'vue'
+  1. Сначала будет искать в директории где будет произведен импорт
+  2. Если не найдет, позелет в node_modules
+
+Минифицировать код в одну строку = не совсем правильно (можно ужать еще сильнее)
+
+Как подключить css из webpack:
+  Когда мы подключаем main.css из index.js - при таком подходе мы импортируем css в js. В этом случае webpack просто пропишет css в выходном файле js (но не css, что неправильно, он должен быть отделньо (css-loader))
+
+Все плагины нужно зарегистрировать в plugins
+
+Один файл конфига webpack.config.js это неправильно
+
+хранить беспорядочно файлы в dist тоже не хорошо (прадва нахуя непонятно)
+
+Зачем разделять development и production среду?
+  Нам например не нужно оптимизировать картинки в development среде(т.к мы просто будем удленять нашу сборку)
+
+Способы разделения сборок:
+  1. webpack-merge
+  2. ENV
+
+Плагины принято писать с большой буквы:
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+  const CopyWebpackPlugin = require('copy-webpack-plugin')
+  const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+
+Ключи webpack.config.js
+  1. entry (Object) - настраивает точки входа
+  2. output (Object) - настраивает точки выхода
+    1. filename - настраивает название точек выхода
+    2. path - путь точек выхода
+    3. publicPath - ???
+  3. devServer (Object) - ???
+    1. overlay - ??? (нету в webpack5)
+    2. port -
+    3. warning - только в webpack4
+    4. errors - только в webpack4
+    5. static
+      1. directory - (замена contentBase в webpack5)
+  4. module (Object) -
+    1. rules (Array) -
+      1. test (Regex/String)
+      2. loader (String/Array)
+      3. exclude (String) - исключает файлы из loader
+      4. use (Object)
+  5. plugins (Array) - ??
+  6. devtool
+  7. mode
+  8. externals
+    1. paths
+  9. contentBase - https://stackoverflow.com/a/72190722 (нету в webpack5)
+  10. resolve
+    1. alias
+    2. extensions
+  11. optimization
+    1. splitChunks
+      1. cacheGroups
+        1.vendor
+          1. name
+          2. chunks
+          3. test
+          4. enforce
+  12. context
+  13. devTool
+  14. sideEffects
+
+
+vendors.js - файл для библиотек, чтобы пользователи постоянно не скачивали библиотеки
+code splitting -
+
+# --------
+
+devDependencies - нужен только для разработки, в итоговое приложение они не пойдут
+
+webpack - корневой функционал
+webpack-cli - отвечает за команды в консоли
+
+webpack работает на nodejs (Значит работают module.exports, require, и т.д)
+output filename ВРОДЕ КАК принято называть bundle.js
+
+output point будет отличаться от выбранного мода: production или development
+
+Плагины - доп. функционал который добавляется к webpack в виде классов
+
+
+# -----------
+webpack в production не используется, поэтому мы закидываем его в devDependencies
+
+progress-plugin замедляет сборку на production
+
+# Крутые плагины
+1. Autoprefixer
+2. mini-css-extract-plugin / css-extract-plugin
+3. css-loader / style-loader
+4. CopyWebpackPlugin / HtmlWebpackPlugin
+
+Вопросы:
+  0. bundler
+  1. webpack-dev-server - флаги (например --open)
+  2. Различия между dependencies и devDependencies (npm)
+  3. Ярлыки:
+    output: {
+      filename: '[name].js'
+    }
+  4. Как использовать exclude в rules
+  4. postcss плагины (postcss.config.js)
+  5. browserslist - ???
+  6. карта сайта (sitemap)
+  7. webpack.build.conf.js / webpack.dev.conf.js / webpack.base.conf.js - разобраться откуда это пошло
+  8. Зачем разделять development и production среду?
+  9. Зачем писать так?
+    module.exports = new Promise((resolve, reject) => {
+      resolve(buildWebpackConfig)
+    })
+  10. Почему нужно ставить порт 8081, а не 8080? - потому что иногда мы будем работать со вторым сервером (node, php)
+  11. webpack.SourceMapDevToolPlugin
+  12. devTool - cheep-module-eval-source-map
+
+  13. ЧТО это?!?!?!
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            name: 'vendors',
+            chunks: 'all',
+            test: /node_modules/,
+            enforce: true
+          }
+        }
+      }
+    }
+
+  14. Варианты использования entry points
+  15. alias best practise
+
+  16. Что такое chunks?
+
+  17. Как очищать папку dist (есть ли альтернатива clean-webpack-plugin?)
+
+  13. Что такое devtool
+  14. ESLint
+
+  15. Как работает contenthash
+
+  16. Переменные окружения (env variables)
+
+  17. ЧТо такое SourceMap?
+
+  18. Изоляция стилей
+
+  19. Декомпозиция конфига
+
+  20. CSS Modules (Если используешь БЭМ, то он и не нужен)
+
+  21. Переменные сборки (bundler variables)
+
+  22. Lazy Chunks
+
+  23. bundleanalyzerplugin

@@ -1,0 +1,109 @@
+https://learn.javascript.ru/call-apply-decorators#prozrachnoe-keshirovanie
+https://ru.hexlet.io/courses/js-advanced-testing/lessons/monkey-patching/theory_unit
+https://dev.to/anuraghazra/design-patterns-everyday-53m0
+https://smthngsmwhr.wordpress.com/2012/10/22/higher-order-javascript-short-journey-into-the-land-of-functional-programming/
+https://felixgerschau.com/javascript-event-loop-call-stack/
+https://dev.to/emnudge/understanding-loose-equality-in-javascript-21c8
+https://dev.to/catherineisonline/series/22945
+https://habr.com/ru/articles/457098/
+https://dev.to/stormytalent/50-hints-jses6-developer-must-know-6th-part-fhl
+https://rollbar.com/blog/debugging-javascript-with-source-maps/
+https://dev.to/jasmin/difference-between-reflectownkeys-and-objectkeys-58n4
+https://dev.to/sjsouvik/call-apply-and-bind-in-js-3n8g
+https://dev.to/jd2r/7-must-know-js-object-methods-2cc7
+https://css-tricks.com/you-can-label-a-javascript-if-statement/
+https://dev.to/samchon/i-made-10x-faster-jsonstringify-functions-even-type-safe-2eme
+https://dev.to/anshuman_bhardwaj/write-better-code-with-these-5-javascript-features-22km
+https://dev.to/anuraghazra/design-patterns-everyday-53m0
+https://dev.to/bnevilleoneill/practical-use-cases-for-javascript-es6-proxies-4cfa
+
+lazy evaluation js
+js coroutine
+js memoization
+
+1. Ленивые вычисления (Lazy Evaluation) - это стратегия вычисления, согласно которой вычисления следует откладывать до тех пор, пока не понадобится их результат.
+	Это стратегия вычисления, согласно которой вычисления следует откладывать до тех пор, пока не понадобится их результат.
+		// true
+		true || console.log('message');
+	Это такая стратегия оптимизации внутри, которая позволяет не вычислять правое значение.
+	
+	Ленивая оценка позволяет:
+		определять потенциально бесконечные структуры данных
+		повысить производительность, избегая ненужных вычислений
+		
+	Итераторы в JavaScript (начиная с ECMAScript 6) - это то, что позволяет лениво оценивать и создавать определяемые пользователем последовательности данных.
+	
+	Эта техника позволяет нашим системам повысить эффективность обработки данных, но при этом наша память может быть сильно перегружена. Проблема была решена с помощью сборки мусора в таких языках программирования, как TypeScript/JavaScript.
+	
+	Хорошие статейки про тему:
+		https://itnext.io/lazy-evaluation-in-javascript-62b8ec45e0f6
+		https://austingil.com/lazy-promises/
+		???
+		https://polvara.me/posts/optimizing-javascript-with-lazy-evaluation-and-memoization
+		
+		
+2. strict and non-strict language
+
+
+3. Каррирование
+
+4. Декларативное программирование - это парадигма программирования, которая обычно показывает логику кода, но не шаги, предпринятые для достижения цели.
+	 Императивное программирование - требует написания пошагового кода с подробным объяснением каждого шага.
+	 
+5. Функция высшего порядка - это функция, которая либо 
+	 	 a) принимает функцию в качестве аргумента (.map, .filter)
+ 		 либо
+ 		 b) возвращает функцию. (function greaterThan(n) { return m => m > n; })
+	 Если функция не делает ни того, ни другого, она является функцией первого порядка.
+	 
+6. Почему не кидает ошибку из-за y?
+		let y = 1;
+		let x = y = 2;
+
+		console.log(y);
+		
+7. Почему ответ Вася?
+
+		let name = "Вася";
+		function sayHi() {
+			alert(name);
+		}
+
+		setTimeout(function() {
+			let name = "Петя";
+			sayHi();
+		}, 1000); // Вася
+		
+		
+8. function scope js
+
+9. Перекрытие (Shadowing)
+
+10. Поднятие (Hoisting) - объявление переменной или функции физически перемещается в начало вашего кода, хотя в действительности этого не происходит.
+
+11. Метки для break/continue
+	loop1:
+	for (let i = 0; i < 5; i++) {
+		if (i === 1) {
+		  continue loop1;
+		}
+		str = str + i;
+	}
+	
+12. Флаги и дескрипторы свойств
+	Флаги свойств:
+		writable – если true, свойство можно изменить, иначе оно только для чтения.
+		enumerable – если true, свойство перечисляется в циклах, в противном случае циклы его игнорируют.
+		configurable – если true, свойство можно удалить, а эти атрибуты можно изменять, иначе этого делать нельзя.
+		
+	Дескриптор свойства - это объект, который содержит значение свойства и все его флаги.
+	
+13. Почему при console.log выводится последние изменения объекта, а не его состояние на тот момент?
+	Суть заключается в том, как работает консоль в хроме. И конкретно, функция log.
+	в свернутом виде будет показываться информация актуальная на момент вывода, но если развернуть будет показано состояния объекта на момент разворачивания.
+	Чтобы избежать такой неоднозначности, можно использовать console.dir
+
+
+
+
+

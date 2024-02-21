@@ -1,0 +1,7 @@
+Вопросы:
+  1. cache buster
+  2. expires header
+  3. cdn (content delivery network)
+  4. file url
+  5. HTTPfilter
+  6. Мемоизация

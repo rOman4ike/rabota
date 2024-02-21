@@ -1,0 +1,20 @@
+1. Условие
+  https://medium.com/@sulistef/3-alternatives-to-if-else-to-improve-code-reading-in-javascript-8e624a2c1343
+  https://blog.wax-o.com/2015/05/an-alternative-to-if-else-and-switch-in-javascript/ (с производительностью пиздец, if быстрее остальных)
+  https://www.measurethat.net/Benchmarks/Show/18432/0/if-else-vs-switch-case-vs-object-literals-vs-ternary-op
+
+  Виды:
+    1. if-else
+    2. switch-case
+    3. тернарный
+    4. &&
+    5. object literal
+
+  Объявлять тот или иной подход плохим - просто догма. Используйте тот, который наиболее удобен для сопровождения и тестирования,
+    а если возникают проблемы с производительностью, то ищите альтернативы.
+
+  Performance:
+    https://stackoverflow.com/questions/37730199/switch-vs-object-lookup-performance-since-jsperf-is-down
+
+    object lookup vs switch:
+      1. https://jsben.ch/JYZLQ

@@ -1,0 +1,35 @@
+JSON.stringify(value, replacer, space)
+let value = JSON.parse(str, [reviver]);
+
+
+Как и toString для преобразования строк, объект может предоставлять метод toJSON для преобразования в JSON. JSON.stringify автоматически вызывает его, если он есть.
+
+Например:
+
+	let room = {
+		number: 23,
+		toJSON() {
+		  return this.number;
+		}
+	};
+
+	let meetup = {
+		title: "Conference",
+		room
+	};
+
+	alert( JSON.stringify(room) ); // 23
+	
+Второй аргумент JSON.parse:
+	reviver - Необязательная функция, которая будет вызываться для каждой пары (ключ, значение) и может преобразовывать значение.
+	Например:
+		let str = '{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}';
+		let meetup = JSON.parse(str);
+		alert( meetup.date.getDate() ); // Ошибка!
+	Значением meetup.date является строка, а не Date объект.
+	
+	Давайте передадим JSON.parse функцию восстановления вторым аргументом, которая возвращает все значения «как есть», но date станет Date:
+		let meetup = JSON.parse(str, function(key, value) {
+			if (key == 'date') return new Date(value);
+			return value;
+		});

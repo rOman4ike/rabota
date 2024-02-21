@@ -1,0 +1,35 @@
+{
+  "name": "webpack-example-3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "serve": "webpack-dev-server"
+  },
+  "sideEffects": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "css-loader": "^6.9.1",
+    "dotenv-webpack": "^8.0.1",
+    "html-webpack-plugin": "^5.6.0",
+    "mini-css-extract-plugin": "^2.7.7",
+    "style-loader": "^3.3.4",
+    "terser-webpack-plugin": "^5.3.10",
+    "util": "^0.12.5",
+    "vue": "^3.4.15",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-manifest-plugin": "^5.0.0"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "fs": "^0.0.1-security",
+    "jquery": "^3.7.1",
+    "node-polyfill-webpack-plugin": "^3.0.0",
+    "webpack-dev-server": "^5.0.2"
+  }
+}

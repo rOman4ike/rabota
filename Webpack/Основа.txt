@@ -1,0 +1,221 @@
+Mode (String):
+  string = 'production': 'none' | 'development' | 'production'
+  Если этот параметр не установлен, веб-пакет устанавливает производство в качестве значения по умолчанию для режима.
+
+  Укажите параметр режима в конфигурации:
+    module.exports = {
+      mode: 'development',
+    };
+  ИЛИ
+    webpack --mode=development
+
+  Если стоит mode = development:
+    Включает "useful names" для modules и chunks.
+
+  Если стоит mode = production:
+    Включает "deterministic mangled names" для modules и chunks
+      FlagDependencyUsagePlugin - плагин, который отслеживает использование modules и помечает их как использованные или неиспользованные. Это позволяет Webpack оптимизировать загрузку modules, удаляя те, которые не используются в коде.,
+      FlagIncludedChunksPlugin - плагин, который отслеживает, какие чанки используются в коде и помечает их как включенные или не включенные. Это позволяет Webpack оптимизировать загрузку chunks, удаляя те, которые не используются в коде.      ,
+      ModuleConcatenationPlugin - объединяет несколько модулей в один для уменьшения размера их загрузки.,
+      NoEmitOnErrorsPlugin - не генерирует выходные файлы, если возникают ошибки (скорее всего просто выведет ошибку в консоль).
+      TerserPlugin - сжимает и оптимизирует код JavaScript с помощью Terser.
+
+  Если стоит mode = none
+    Отключает любые параметры оптимизации по умолчанию.
+
+Context (String):
+  Абсолютный путь, для разрешения "entry points" и "loaders" из конфигурации.
+
+  Примеры "loaders", которые могут использоваться с context, включают:
+    1. sass-loader
+    2. file-loader
+    3. и т.д
+
+Entry Points (String / Object):
+  "Entry point" указывает, какой module webpack следует использовать, чтобы начать построение внутреннего "graph dependency".
+  "Динамически загружаемый module не является entry point."
+
+  Правило, которое следует учитывать: одна entry point на каждую HTML-страницу.
+    SPA: одна entry point (А так ли это?)
+    MPA: несколько entry points.
+
+  Naming:
+    Если передается строка или массив строк, "chunk" называется main.
+    Если передается объект, то каждый ключ - это имя "chunk", а значение описывает entry point для "chunk".
+
+  Entry descriptor:
+    Синтаксис дескрипторов может быть использован для передачи дополнительных опций точке входа.
+      entry: {
+        personal: {
+          import: './personal.js',
+          filename: 'pages/personal.js',
+          dependOn: 'shared', // ???
+          chunkLoading: 'jsonp', // ???
+          asyncChunks: true, // ???
+          layer: 'name of layer', // ???
+        },
+      }
+
+Output Points (Object):
+
+  path (String):
+    Выходной каталог в виде абсолютного пути.
+
+  pathinfo (Boolean):
+    Указывает webpack включать в "bundle" комментарии с информацией о содержащихся в них модулях.
+    По умолчанию эта опция имеет значение true в режиме development и false в режиме production соответственно.
+
+  publicPath (String):
+    ???
+
+  crossOriginLoading (Boolean / String):
+    Указывает webpack включить кросс-оригинальную загрузку чанков.
+    Вступает в силу только в том случае, если в "target" задано 'web', которое использует JSONP для загрузки "chunks" по
+    требованию, добавляя "script tags".
+      'anonymous' - Enable cross-origin loading without credentials
+      'use-credentials' - Enable cross-origin loading with credentials
+
+  filename (String / Function):
+    Опция определяет имя каждого выходного "bundle". "Bundle" записывается в каталог, указанный опцией output.path.
+
+    Она влияет только на output files, которые загружаются изначально.
+    Эта опция не влияет на output files для загружаемых по требованию chunks.
+    ;(Когда Webpack создает чанки (chunks), он создает отдельные файлы для каждого модуля, который загружается во время выполнения приложения.)
+    ;(Эти файлы могут быть загружены по требованию с помощью функции import() или require.ensure().)
+    Файлы, созданные "loaders", также не затрагиваются.
+
+    Для файлов chunks, загружаемых по требованию, используется опция output.chunkFilename.
+
+    Template strings:
+      Следующие замены доступны в строках шаблонов (через внутренний плагин webpack TemplatedPathPlugin):
+
+      [hash] - каждый чанк будет иметь один и тот же хэш во всех сборках. Если что-то изменится в вашей сборке, соответствующий хэш также изменится.
+      ;(Проблема с вышеуказанной реализацией заключается в том, что мы не можем добиться долгосрочного кэширования)
+      ;(В идеальной ситуации мы хотим обновлять только те хэши чанков, для которых что-то изменилось на стороне разработки.)
+      [chunkhash] - Chunkhash основан на "entry point" webpack, каждая определенная "entry point" будет иметь свой собственный "hash".
+        Если что-то изменится для конкретной "entry point", изменится только соответствующий "hash".
+      ;(Чтобы правильно использовать браузерное кэширование, вам также придется добавить "NamedModulesPlugin")
+      [contenthash] - особый тип "hash", созданный в "ExtractTextPlugin", который вычисляется по извлеченному содержимому,
+        а не по полному содержимому "chunk".
+      ;(В случае с CSS, если вы используете name.[chunkhash].css в ExtractTextplugin, вы получите одинаковый хэш как для css, так и для js чанка.)
+      ;(Теперь, если вы измените какой-либо CSS, ваш результирующий чанкхаш не изменится. Поэтому для правильной работы необходимо использовать name.[contenthash].css.)
+      ;(Таким образом, при изменении CSS, ваш путь к css будет меняться в index.html.)
+      "ВАЖНО!":
+        Не рекомендуется использовать hash/chunkhash/contenthash в production среде, так как это увеличивает время компиляции.
+
+  clean (Boolean / Object) (5.20.0+):
+    clean: true, // Очистит output каталог
+
+  Что скорее всего нахуй не понадобится:
+    assetModuleFilename (String):
+      То же самое, что и output.filename, но для "Asset Modules".
+
+    chunkFilename (String):
+      По умолчанию используется [id].js или значение, выведенное из output.filename ([name] заменяется на [id] или добавляется [id].).
+
+    ignoreBrowserWarnings (Boolean):
+      Скрыть предупреждения из консоли браузера в производстве. Эта опция не влияет на вывод в терминале/консоли.
+
+Plugins:
+  Опция plugins используется для настройки процесса сборки webpack различными способами.
+  Webpack поставляется с множеством встроенных плагинов, доступных в разделе webpack.[plugin-name].
+
+Плагины:
+  1. Html-webpack-plugin - (!!!):
+    Плагин сгенерирует для вас HTML5-файл, включающий все ваши связки webpack в тело с помощью script tags.
+
+    Если у вас несколько точек входа в webpack, все они будут включены с тегами <script> в сгенерированный HTML.
+
+    Если в выходных данных webpack есть CSS-активы (например, CSS, извлеченные с помощью MiniCssExtractPlugin),
+    то они будут включены с тегами <link> в элемент <head> сгенерированного HTML.
+
+    Writing Your Own Templates:
+      Самый простой способ написать свой шаблон - использовать template option и передать пользовательский HTML-файл.
+      Plugin html-webpack-plugin автоматически добавит в разметку все необходимые файлы CSS, JS, manifest и favicon.
+
+      По умолчанию в шаблоне доступны следующие переменные (вы можете расширить их с помощью опции templateParameters):
+        "htmlWebpackPlugin": данные, специфичные для этого плагина
+        "htmlWebpackPlugin.options": хэш опций, который был передан плагину.
+        "htmlWebpackPlugin.tags": подготовленные массивы headTags и bodyTags для отображения тегов <base>, <meta>, <script> и <link>.
+        "htmlWebpackPlugin.files": прямой доступ к файлам, используемым при компиляции.
+
+        "webpackConfig": конфигурация webpack, которая использовалась для этой компиляции.
+          Это может быть использовано, например, для получения publicPath (webpackConfig.output.publicPath).
+
+        "compilation": объект компиляции webpack. С его помощью можно, например, получить содержимое обработанных активов
+          и вставить их непосредственно в страницу с помощью compilation.assets[...].source()
+
+      "ВАЖНО"
+        templateContent не позволяет использовать загрузчики webpack для вашего шаблона и не будет следить за изменениями файла шаблона.
+
+      Meta Tags:
+        Если установлена опция meta, html-webpack-плагин будет вводить метатеги.
+        Для шаблона по умолчанию html-webpack-плагин уже предоставляет мета-тег viewport по умолчанию.
+
+    Options (Не все!):
+      title (String) - заголовок страницы
+      filename (String / Function) - название выходного файла
+      template (String) - путь к шаблону
+      inject (String / Boolean) -
+        true || 'head' || 'body' || false
+        При передаче 'body' все ресурсы javascript будут помещены в нижнюю часть элемента body.
+        При передаче 'head' скрипты будут помещены в элемент head.
+        Передача true добавит их в head/body в зависимости от опции scriptLoading.
+        Передача false отключит автоматические инъекции.
+      scriptLoading (String) -
+        {'blocking'|'defer'|'module'|'systemjs-module'}
+        Установка значения 'module' добавляет атрибут type="module".
+        Это также подразумевает "defer", так как модули автоматически откладываются.
+      minify (Boolean / Object) -
+        true if mode is 'production', otherwise false
+        Управляет тем, следует ли минифицировать вывод и какими способами.
+      excludeChunks (Array <String>) - Позволяет пропустить некоторые chunk
+      templateParameters ()
+
+    Просто прикольные options:
+      favicon,
+      meta,
+      base
+
+  2. AutomaticPrefetchPlugin
+  3. CommonsChunkPlugin / SplitChunksPlugin (Вот их надо прям прочитать, хороший буст дают)
+  4. ContextReplacementPlugin - ???
+  5. DefinePlugin / EnvironmentPlugin
+  6. DllPlugin / DllReferencePlugin
+  7. EvalSourceMapDevToolPlugin - ???
+  8. HotModuleReplacementPlugin
+  9. LimitChunkCountPlugin / MinChunkSizePlugin - ???
+  10. NoEmitOnErrorsPlugin
+  11. PrefetchPlugin / ProfilingPlugin / ProvidePlugin
+  12. ProgressPlugin
+  13. SourceMapDevToolPlugin (!!!)
+  14. MiniCssExtractPlugin / CssMinimizerWebpackPlugin
+
+
+
+
+Словарик:
+  1. Entry Point - ???
+  2. Graph Dependency - ???
+  3. Useful names - ???
+  4. Deterministic Mangled Names - ???
+  5. Bundle - ???
+  6. Plugins - ??/
+
+  ??. Chunk - ??
+  ??. Source Map - ??
+  ??. Hash - ???
+
+
+;() - ОБЪЯСНЕНИЕ ПРЕДЛОЖЕНИЯ
+
+Вопросы
+  1. output.publicPath
+
+  2. что это в webpack?
+    Compilation level
+    Chunk level
+    Module level
+
+  3. DefinePlugin
+    Примеры использования, когда нам нужен функционал в development, но не в production и наоборот

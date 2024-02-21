@@ -1,0 +1,10 @@
+1.
+  Object(v) === v
+  typeof v === 'object'
+  Лучше первое т.к при null ВТОРОЕ ВЫРАЖЕНИЕ ВЫЗЫВАЕТ true СУКААААА
+
+2.
+  v-for="(value, key) in changeReportObj
+  changeReportObj - метод
+
+  выражение changeReportObj будет вычисляться только один раз или на каждую итерацию цикла - ???

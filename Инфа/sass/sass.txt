@@ -1,0 +1,134 @@
+Операции со строками:
+  Операция конкатенации строк осуществляется при помощи символа +. Например:
+
+    p
+      cursor: e + -resize // e-resize
+
+
+Альфа-канал:
+  Альфа-канал цвета можно регулировать с помощью функций opacify и transparentize. Например:
+
+    $translucent-red: rgba(255, 0, 0, 0.5)
+    p
+      color: opacify($translucent-red, 0.3)
+      background-color: transparentize($translucent-red, 0.25)
+
+true/false
+  SassScript поддерживает операторы И, ИЛИ и НЕ (and, or, not) для логических значений. Например:
+
+    $menuOn: true
+    $menuDropDown: false
+    .menu li
+      color: #ff0000
+      text-decoration: underline
+      @if $menuOn == true and $menuDropDown == true
+        position: relative
+
+Синтаксис:
+  SassScript содержит некоторые полезные функции, которые можно вызвать, используя обычный синтаксис CSS:
+
+    p
+      color: hsl(0, 100%, 50%)
+
+  В функции Sass можно передавать именованные аргументы используя карты. Предыдущий пример может быть записан следующим образом:
+
+    p
+      color: hsl($hue: 0, $saturation: 100%, $lightness: 50%)
+
+Интерполяция:
+  Интерполяцию можно использовать практически в любом месте таблицы стилей Sass для встраивания результата выражения SassScript в фрагмент CSS.
+  Вы также можете использовать переменные SassScript в селекторах и в названиях свойств используя синтаксис #{} интерполяции:
+
+    $name: foo
+    $attr: border
+    p.#{$name}
+      #{$attr}-color: blue
+
+Компиляция:
+  Если у Вас есть scss или sass файл, который вы хотите импортировать, но не хотите его компилировать напрямую в CSS-файл,
+  то добавьте нижнее подчеркивание в начало имени файла. Это сообщит Sass о том, что не нужно компилировать этот файл напрямую в CSS.
+  Когда импортируете такой файл, то нижнее подчеркивание можно не указывать.
+
+@extend:
+    .error
+      border: 1px #f00
+      background-color: #fdd
+
+    .attention
+      font-size: 3em
+      background-color: #ff0
+
+    .seriousError
+      @extend .error
+      @extend .attention
+      border-width: 3px
+
+  Скомипилируется так:
+
+    .error, .seriousError {
+      border: 1px #f00;
+      background-color: #fdd;
+    }
+
+    .attention, .seriousError {
+      font-size: 3em;
+      background-color: #ff0;
+    }
+
+    .seriousError {
+      border-width: 3px;
+    }
+
+  Селекторы расширения:
+    Шаблонные селекторы выглядят так же, как и селекторы классов или идентификаторов, только . или # заменены на %.
+    Сами по себе они не дают набора правил в генерируемом CSS файле. Например:
+
+      // Данный набор правил не будет сгенерирован
+      #context a%extreme
+        color: blue
+        font-weight: bold
+        font-size: 2em
+
+      .notice
+        @extend %extreme
+
+    Скомипилируется так:
+
+      #context a.notice {
+        color: blue;
+        font-weight: bold;
+        font-size: 2em;
+      }
+
+Переменные:
+  Переменные Sass являются обязательными, а это означает, что если вы используете переменную, а затем меняете ее значение,
+  предыдущее использование останется прежним.
+
+  Переменные Sass, как и все идентификаторы Sass, воспринимают дефисы и подчеркивания как идентичные.
+  Это означает, что $font-size и $font_size относятся к одной и той же переменной.
+
+Различия @use @forward и @import:
+  https://habr.com/ru/articles/471924/
+
+meta:
+  meta.load-css
+
+Управляющие директивы:
+  Обратите внимание:
+    управляющие директивы - это продвинутые возможности, не для повседневного использования. Они предназначены в основном для использования в миксинах
+
+  1. @if
+    $rounded-corners: false
+
+    .button
+      border: 1px solid black
+      border-radius: if($rounded-corners, 5px, null)
+
+  2. @for
+  3. @each
+  4. @while (Лучше вообще не использовать)
+
+Важно!:
+  1. файл colors.scss не может сосуществовать с фрагментом _colors.scss.
+
+  2.

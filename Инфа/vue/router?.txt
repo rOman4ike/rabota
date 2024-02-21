@@ -1,0 +1,802 @@
+Статейки:
+  https://router.vuejs.org/guide/advanced/navigation-guards.html#Optional-third-argument-next
+  https://github.com/vuejs/rfcs/tree/master
+
+Essentials:
+Getting Started:
+  <router-link to="/"/> - позволяет Vue Router изменять URL без перезагрузки страницы, обрабатывать генерацию URL, а также его кодировку
+  <router-view/> - отображает компонент, соответствующий URL
+
+  const routes = [ { path: '/', component: Home } ]
+  const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
+    routes, // short for `routes: routes`
+  })
+
+  app.use(router) - запускаем начальную навигацию и предоставляем доступ к
+    'this.$router', а также к текущему маршруту как
+    'this.$route' внутри любого компонента
+
+  this.$router — это то же самое, что и непосредственное использование экземпляра маршрутизатора, созданного с помощью 'createRouter'.
+  Причина, по которой мы используем this.$router, заключается в том, что мы не хотим импортировать маршрутизатор в каждый
+    отдельный компонент, который должен управлять маршрутизацией.
+
+Dynamic Route Matching with Params:
+  В Vue Router мы можем использовать динамический сегмент пути, мы называем его параметром (param):
+    const routes = [{ path: '/users/:id', component: User }]
+    Теперь URL-адреса, такие как /users/johnny и /users/jolyne, будут соответствовать одному и тому же маршруту.
+  Обращение к params:
+    this.$route.params.id
+  Обращение к атрибутам в params:
+  pattern	                       | matched path	            | $route.params
+  /users/:username/posts/:postId | /users/eduardo/posts/123 | { username: 'eduardo', postId: '123' }
+
+  Reacting to Params Changes (ВАЖНО!):
+    При использовании маршрутов с параметрами следует отметить одну вещь: когда пользователь переходит
+      из /users/johnny в /users/jolyne, один и тот же экземпляр компонента будет использоваться повторно, что более эффективно.
+    Однако это также означает, что 'перехватчики жизненного цикла компонента вызываться не будут'.
+
+    Чтобы отреагировать на изменения параметров в том же компоненте, вы можете просто просмотреть что-нибудь в объекте $route:
+      const User = {
+        created() {
+          this.$watch(
+            () => this.$route.params,
+            (toParams, previousParams) => {
+              // react to route changes...
+            }
+          )
+        },
+      }
+    ИЛИ
+    Используйте навигационную защиту 'beforeRouteUpdate', которая также позволяет отменить навигацию:
+      const User = {
+        async beforeRouteUpdate(to, from) {
+          // react to route changes...
+          this.userData = await fetchUser(to.params.id)
+        },
+      }
+
+  Catch all / 404 Not found Route (ВАЖНО!):
+    Если мы хотим сопоставить что-либо, мы можем использовать регулярное выражение, добавив его в круглые скобки сразу после параметра:
+      const routes = [
+        // will match everything and put it under `$route.params.pathMatch`
+        { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
+        // will match anything starting with `/user-` and put it under `$route.params.afterUser`
+        { path: '/user-:afterUser(.*)', component: UserGeneric },
+      ]
+
+Routes' Matching Syntax:
+  Custom regex in params:
+    При определении такого параметра, как :userId, мы внутренне используем следующее регулярное выражение ([^/]+) (хотя бы один символ, кроме косой черты /)
+
+    Представьте себе два маршрута /:orderId и /:productName, оба будут соответствовать одним и тем же URL-адресам,
+      поэтому нам нужен способ их различения.
+
+    Самый простой способ — добавить статический раздел к пути, который их отличает:
+      const routes = [
+        // matches /o/3549
+        { path: '/o/:orderId' },
+        // matches /p/books
+        { path: '/p/:productName' },
+      ]
+    ИЛИ
+    Однако orderId всегда является числом, а ProductName может быть любым, поэтому мы можем указать собственное регулярное
+      выражение для параметра в круглых скобках:
+      const routes = [
+        // /:orderId -> matches only numbers
+        { path: '/:orderId(\\d+)' },
+        // /:productName -> matches anything else
+        { path: '/:productName' },
+      ]
+    Порядок массива маршрутов даже не имеет значения!
+
+    'ВАЖНО!'
+      Обязательно экранируйте обратную косую черту (\), как мы сделали с \d (становится \\d), чтобы фактически передать
+        символ обратной косой черты в строке в JavaScript.
+
+  Repeatable params:
+    Если вам нужно сопоставить маршруты с несколькими разделами, например /first/second/third, вам следует пометить
+      параметр как повторяемый с помощью * (0 или более) и + (1 или более):
+      const routes = [
+        // /:chapters -> matches /one, /one/two, /one/two/three, etc
+        { path: '/:chapters+' },
+        // /:chapters -> matches /, /one, /one/two, /one/two/three, etc
+        { path: '/:chapters*' },
+      ]
+    Это даст вам массив параметров вместо строки, а также потребует от вас передать массив при использовании именованных маршрутов:
+      // given { path: '/:chapters+', name: 'chapters' },
+      router.resolve({ name: 'chapters', params: { chapters: [] } }).href
+      // throws an Error because `chapters` is empty, but with path '/:chapters*' there will be no error
+    Также можно комбинировать с пользовательским регулярным выражением:
+      // matches /1, /1/2, etc
+      { path: '/:chapters(\\d+)+' },
+
+  Sensitive and strict route options:
+    Все маршруты нечувствительны к регистру и соответствуют маршрутам как с косой чертой, так и без нее.
+    Например, маршрут /users соответствует /users, /users/ и даже /Users/.
+
+    Это поведение может быть настроено с помощью опций strict и sensitive, которые могут быть установлены как на уровне
+      маршрутизатора, так и на уровне маршрута:
+      const router = createRouter({
+        routes: [{ path: '/users/:id', sensitive: true }],
+        strict: true
+      })
+
+  Optional parameters:
+    Вы также можете отметить параметр как необязательный с помощью модификатора ?
+    Обратите внимание, что * технически также обозначает параметр как необязательный, но параметры ? не могут повторяться.
+  const routes = [{ path: '/users/:userId(\\d+)?' }]
+
+Nested Routes:
+  /user/johnny/profile                  /user/johnny/posts
+  +------------------+                  +-----------------+
+  | User             |                  | User            |
+  | +--------------+ |                  | +-------------+ |
+  | | Profile      | |  +------------>  | | Posts       | |
+  | |              | |                  | |             | |
+  | +--------------+ |                  | +-------------+ |
+  +------------------+                  +-----------------+
+  В Vue Router эти отношения можно выразить с помощью вложенных <router-view/>.
+  App:
+    <div id="app">
+      <router-view></router-view>
+    </div>
+  Здесь <router-view> представляет собой маршрутизатор верхнего уровня.
+
+  User:
+    const User = {
+      template: '<div>User {{ $route.params.id }}</div>',
+    }
+  Чтобы вывести компоненты в этот вложенный <router-view/>, необходимо использовать опцию children в любом из маршрутов:
+    const routes = [{
+      path: '/user/:id',
+      children: [{
+        // UserProfile will be rendered inside User's <router-view>
+        // when /user/:id/profile is matched
+        path: 'profile',
+        component: UserProfile,
+      }]
+    }]
+  Обратите внимание, что вложенные пути, начинающиеся с /, будут рассматриваться как корневые.
+
+  Nested Named Routes:
+    При работе с именованными маршрутами обычно присваиваются имена дочерним маршрутам:
+      const routes = [{
+        path: '/user/:id',
+        component: User,
+        // обратите внимание, что только дочерний маршрут имеет имя
+        children: [{ path: '', name: 'user', component: UserHome }]
+      }]
+    Таким образом, при переходе по адресу /user/:id всегда будет отображаться вложенный маршрут.
+
+Programmatic Navigation:
+  Помимо использования <router-link>, мы можем делать это программно
+
+  Navigate to a different location:
+    Declarative	              |   Programmatic
+    <router-link :to="...">	  |   router.push(...)
+      // with query, resulting in /register?plan=private
+      router.push({ path: '/register', query: { plan: 'private' } })
+      // with hash, resulting in /about#team
+      router.push({ path: '/about', hash: '#team' })
+      // if possible use `name` and `params` to benefit from automatic URL encoding
+      router.push({ name: 'user', params: { username } }) // -> /user/eduardo
+
+    'ВАЖНО!'
+      При указании параметров обязательно указывайте либо строку, либо число (или их массив для повторяющихся параметров).
+      Любые другие типы (например, объекты, булевы и т.д.) будут автоматически stringified.
+      Для необязательных параметров можно указать пустую строку ("") или null в качестве значения, чтобы удалить его.
+
+    Поскольку prop to принимает объект того же типа, что и router.push, к ним применяются совершенно одинаковые правила.
+
+    'ВАЖНО!'
+      router.push и все остальные методы навигации возвращают Promise, который позволяет нам дождаться окончания навигации
+        и узнать, удалась она или нет.
+
+  Replace current location:
+    Действует аналогично router.push, с той лишь разницей, что осуществляет навигацию без проталкивания новой записи
+      истории, как следует из названия - заменяет текущую запись.
+
+    Declarative	                      |   Programmatic
+    <router-link :to="..." replace>   |   router.replace(...)
+
+    'ВАЖНО!'
+      Также можно напрямую добавить свойство replace: true к аргументу to, передаваемому в router.push:
+        router.push({ path: '/home', replace: true })
+        // эквивалентно
+        router.replace({ path: '/home' })
+
+  Traverse history:
+    Этот метод принимает в качестве параметра одно целое число, указывающее, на сколько шагов вперед или назад следует
+      перейти в стеке истории, аналогично window.history.go(n).
+
+      router.go(1)
+
+Named Routes:
+  Помимо пути, любому маршруту можно присвоить имя. Это имеет следующие преимущества:
+    1. No hardcoded URLs
+    2. Автоматическое кодирование/декодирование params
+    3. Предотвращение опечаток в URL
+    4. Обход ранжирования путей
+  Каждое имя должно быть уникальным для всех маршрутов. Если вы добавите одно и то же имя в несколько маршрутов,
+    маршрутизатор сохранит только последний из них.
+
+Named Views (?):
+  Иногда требуется отобразить несколько представлений одновременно, а не вложенными друг в друга, например, создать макет
+    с представлением боковой панели и главным представлением. Именно здесь и пригодятся именованные views.
+    <router-view class="view left-sidebar" name="LeftSidebar"></router-view>
+    <router-view class="view main-content"></router-view>
+    <router-view class="view right-sidebar" name="RightSidebar"></router-view>
+  Вид отображается с помощью компонента, поэтому для нескольких видов требуется несколько компонентов
+    для одного и того же маршрута.
+  const router = createRouter({
+    history: createWebHashHistory(),
+    routes: [{ path: '/', components: {
+          default: Home,
+          // short for LeftSidebar: LeftSidebar
+          LeftSidebar,
+          // they match the `name` attribute on `<router-view>`
+          RightSidebar,
+        }
+      }]
+    })
+
+  Nested Named Views:
+    С помощью именованных views с вложенными views можно создавать сложные макеты.
+    /settings/emails                                       /settings/profile
+    +-----------------------------------+                  +------------------------------+
+    | UserSettings                      |                  | UserSettings                 |
+    | +-----+-------------------------+ |                  | +-----+--------------------+ |
+    | | Nav | UserEmailsSubscriptions | |  +------------>  | | Nav | UserProfile        | |
+    | |     +-------------------------+ |                  | |     +--------------------+ |
+    | |     |                         | |                  | |     | UserProfilePreview | |
+    | +-----+-------------------------+ |                  | +-----+--------------------+ |
+    +-----------------------------------+                  +------------------------------+
+    1. Nav is just a regular component
+    2. UserSettings is the parent view component
+    3. UserEmailsSubscriptions, UserProfile, UserProfilePreview are nested view components
+
+    Секция <template> для компонента UserSettings в приведенном выше макете будет выглядеть примерно так:
+      <!-- UserSettings.vue -->
+      <div>
+        <h1>User Settings</h1>
+        <NavBar />
+        <router-view />
+        <router-view name="helper" />
+      </div>
+    Тогда при такой конфигурации маршрута можно добиться вышеописанной схемы:
+    {
+      path: '/settings',
+      // You could also have named views at the top
+      component: UserSettings,
+      children: [{
+        path: 'emails',
+        component: UserEmailsSubscriptions
+      }, {
+        path: 'profile',
+        components: {
+          default: UserProfile,
+          helper: UserProfilePreview
+        }
+      }]
+    }
+
+Redirect and Alias (?):
+  Redirect:
+    Перенаправление также осуществляется в конфигурации маршрутов. Для перенаправления из /home в /:
+      const routes = [{ { path: '/home', redirect: '/' }]
+      const routes = [{ { path: '/home', redirect: { name: 'homepage' } }]
+    Или даже использовать функцию для динамического перенаправления:
+      const routes = [
+        {
+          // /search/screens -> /search?q=screens
+          path: '/search/:searchText',
+          redirect: to => {
+            // функция получает в качестве аргумента целевой маршрут
+            // здесь мы возвращаем путь/место переадресации.
+            return { path: '/search', query: { q: to.params.searchText } }
+          }
+        }
+      ]
+    Примечание, в приведенном выше примере добавление защиты beforeEnter к маршруту /home не будет иметь никакого эффекта.
+
+    При написании перенаправления можно опустить опцию component, поскольку оно никогда не достигается напрямую,
+      поэтому компонент для рендеринга не требуется.
+    Единственным исключением являются вложенные маршруты: если запись маршрута имеет дочерние элементы и свойство redirect,
+      она также должна иметь свойство component.
+
+    Relative redirecting:
+      Также возможно перенаправление на относительное местоположение:
+        const routes = [
+          {
+            // will always redirect /users/123/posts to /users/123/profile
+            path: '/users/:id/posts',
+            redirect: to => {
+              // the function receives the target route as the argument
+              // a relative location doesn't start with `/`
+              // or { path: 'profile'}
+              return 'profile'
+            },
+          },
+        ]
+
+  Alias:
+    'redirect' означает, что когда пользователь заходит в /home, URL будет заменен на /, а затем сопоставлен как /. Но что такое alias?
+
+    alias / как /home означает, что когда пользователь посещает /home, URL остается /home, но он будет сопоставлен так,
+      как будто пользователь посещает /.
+    Все вышесказанное можно выразить в конфигурации маршрута следующим образом:
+      const routes = [{ { path: '/', component: Homepage, alias: '/home' }]
+    Можно даже комбинировать оба варианта и задавать несколько псевдонимов с помощью массива:
+      const routes = [
+        {
+          path: '/users',
+          component: UsersLayout,
+          children: [
+            // this will render the UserList for these 3 URLs
+            // - /users
+            // - /users/list
+            // - /people
+            { path: '', component: UserList, alias: ['/people', 'list'] },
+          ],
+        },
+      ]
+    Если маршрут имеет параметры, обязательно включите их в любой абсолютный псевдоним:
+      const routes = [
+        {
+          path: '/users/:id',
+          component: UsersByIdLayout,
+          children: [
+            // this will render the UserDetails for these 3 URLs
+            // - /users/24
+            // - /users/24/profile
+            // - /24
+            { path: 'profile', component: UserDetails, alias: ['/:id', ''] },
+          ],
+        },
+      ]
+
+Passing Props to Route Components (?):
+  Использование $route в компоненте создает тесную связь с маршрутом, что ограничивает гибкость компонента, поскольку
+    он может быть использован только для определенных URL.
+  Хотя это не обязательно плохо, мы можем развязать это поведение с помощью опции props:
+
+  Мы можем заменить:
+    const User = {
+      template: '<div>User {{ $route.params.id }}</div>'
+    }
+    const routes = [{ path: '/user/:id', component: User }]
+  На:
+    const User = {
+      // make sure to add a prop named exactly like the route param
+      props: ['id'],
+      template: '<div>User {{ id }}</div>'
+    }
+    const routes = [{ path: '/user/:id', component: User, props: true }]
+
+  Boolean mode ('ВАЖНО!'):
+    Если значение props равно true, то в качестве props компонента будет установлен route.params.
+
+  Object mode:
+    Если props является объектом, то он будет установлен в качестве props компонента как такового.
+    Полезно для случаев, когда props статичен.
+      const routes = [
+        {
+          path: '/promotion/from-newsletter',
+          component: Promotion,
+          props: { newsletterPopup: false }
+        }
+      ]
+
+  Function mode:
+    Можно создать функцию, возвращающую props.
+    Это позволяет приводить параметры к другим типам, комбинировать статические значения со значениями, основанными на маршрутах, и т.д.
+    const routes = [
+      {
+        path: '/search',
+        component: SearchUser,
+        props: route => ({ query: route.query.q })
+      }
+    ]
+
+    URL /search?q=vue будет передавать {query: 'vue'} в качестве реквизита компоненту SearchUser.
+    Постарайтесь, чтобы функция props не была статичной, поскольку она будет оцениваться только при изменении маршрута.
+    Если для определения props требуется состояние, используйте компонент-обертку, тогда Vue сможет реагировать на изменения state.
+
+Different History modes (?):
+  Опция history при создании экземпляра маршрутизатора позволяет выбрать один из различных режимов истории.
+
+  Hash Mode (Стоит по умолчанию):
+    Здесь используется хэш-символ (#) перед собственно передаваемым URL.
+    Поскольку эта часть URL никогда не передается на сервер, она не требует специальной обработки на уровне сервера.
+    Однако это плохо сказывается на SEO.
+    Если вас это беспокоит, используйте режим истории HTML5.
+      const router = createRouter({
+        history: createWebHashHistory(),
+        routes: [...],
+      })
+
+  HTML5 Mode:
+    Является рекомендуемым
+      const router = createRouter({
+        history: createWebHistory(),
+        routes: [...],
+      })
+  При использовании функции createWebHistory() URL будет выглядеть "нормально", например, https://example.com/user/id.
+  Однако здесь возникает проблема: Поскольку наше приложение является одностраничным, то без соответствующей настройки
+    сервера при обращении к https://example.com/user/id непосредственно в браузере пользователи получат ошибку 404.
+  Не волнуйтесь: чтобы решить эту проблему, достаточно добавить на сервер простой резервный маршрут.
+  Если URL-адрес не соответствует никаким статическим активам, он должен обслуживать ту же страницу index.html,
+    в которой живет ваше приложение.
+
+  Memory Mode:
+    Режим истории памяти не предполагает наличия браузерного окружения, поэтому не взаимодействует с URL и не запускает
+      автоматическую навигацию.
+    Это делает его идеальным для среды Node и SSR.
+    Требует, чтобы после вызова app.use(router) была запущена начальная навигация.
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [...],
+    })
+    Хотя этот режим не рекомендуется использовать внутри приложений Browser, но следует иметь в виду, что при этом не будет
+      истории, то есть нельзя будет вернуться назад или вперед.
+
+Advanced:
+Navigation Guards (?):
+  В основном используются для защиты навигации, либо перенаправляя ее, либо отменяя.
+  Существует несколько способов подключиться к процессу навигации по маршруту: глобально, по маршруту или внутри компонента.
+
+  Global Before Guards:
+    С помощью router.beforeEach можно зарегистрировать глобальные guards перед событиями:
+      const router = createRouter({ ... })
+      router.beforeEach((to, from) => {
+        // ...
+        // explicitly return false to cancel the navigation
+        return false
+      })
+    Global before guards вызываются в порядке создания при каждом запуске навигации.
+    Может происходить асинхронно, и navigation считается ожидающей, пока не будут разрешены все хуки.
+
+    Каждая функция guard получает два аргумента:
+      1. to - route, к которому осуществляется переход
+      2. from - текущее местоположение route
+    Функция может возвращать любое из следующих значений:
+      1. false - отмена текущей навигации
+      2. Route location - Перенаправление на другое место осуществляется путем передачи местоположения маршрута,
+        как если бы вы вызывали router.push() что позволяет передавать такие параметры, как replace: true или name: 'home'.
+        При этом текущая навигация отбрасывается и создается новая с тем же from.
+          router.beforeEach(async (to, from) => {
+            if (
+              // make sure the user is authenticated
+              !isAuthenticated &&
+              // ❗️ Avoid an infinite redirect
+              to.name !== 'Login'
+            ) {
+              // redirect the user to the login page
+              return { name: 'Login' }
+            }
+          })
+        Также работает и асинхронно:
+          router.beforeEach(async (to, from) => {
+            // canUserAccess() returns `true` or `false`
+            const canAccess = await canUserAccess(to)
+            if (!canAccess) return '/login'
+          })
+      3. Если ничего не возвращается, undefined или true, то навигация подтверждается, и вызывается следующий Navigation Guard.
+
+    Optional third argument next:
+      В предыдущих версиях Vue Router также можно было использовать третий аргумент next, это было распространенным
+        источником ошибок, и для его устранения был выпущен RFC.
+      Однако он по-прежнему поддерживается
+      Он может появиться более одного раза, но только если логические пути не пересекаются, иначе хук никогда не будет разрешен или выдаст ошибку.
+
+  Global Resolve Guards:
+    Вы можете зарегистрировать Global Guard с помощью функции router.beforeResolve.
+
+    Это аналогично router.beforeEach, поскольку срабатывает при каждой навигации, но resolve guard вызывается непосредственно
+      перед подтверждением навигации, после разрешения всех внутрикомпонентных guards и async-компонентов маршрута.
+
+      router.beforeResolve(async to => {})
+    router.beforeResolve - это идеальное место для получения данных или выполнения любой другой операции, которую вы
+      хотите избежать, если пользователь не может войти на страницу.
+
+  Global After Hooks:
+    Вы также можете зарегистрировать global after hooks, однако, в отличие от guards,
+      эти хуки не получают функцию next и не могут влиять на навигацию:
+      router.afterEach((to, from, failure) => {
+        sendToAnalytics(to.fullPath)
+      })
+    Они полезны для аналитики, изменения заголовка страницы, функций доступности, таких как анонсирование страницы,
+      и многих других вещей.
+    Они также отражают сбои навигации в качестве третьего аргумента:
+
+  Global injections within guards (Vue 3):
+    Начиная с версии Vue 3.3, появилась возможность использовать функцию inject() внутри navigation guards.
+    Это удобно для инжекции глобальных свойств, таких как хранилища pinia.
+
+  Per-Route Guard:
+    Вы можете определить защиту beforeEnter непосредственно в объекте конфигурации маршрута:
+      const routes = [
+        {
+          path: '/users/:id',
+          component: UserDetails,
+          beforeEnter: (to, from) => {
+            // reject the navigation
+            return false
+          },
+        },
+      ]
+    beforeEnter срабатывают только при входе в маршрут, они не срабатывают при изменении параметров, запроса или хэша
+    Вы также можете передать массив функций в beforeEnter, это полезно при повторном использовании охранников для разных маршрутов:
+      function removeQueryParams(to) {
+        if (Object.keys(to.query).length)
+          return { path: to.path, query: {}, hash: to.hash }
+      }
+
+      function removeHash(to) {
+        if (to.hash) return { path: to.path, query: to.query, hash: '' }
+      }
+
+      const routes = [
+        {
+          path: '/users/:id',
+          component: UserDetails,
+          beforeEnter: [removeQueryParams, removeHash],
+        },
+        {
+          path: '/about',
+          component: UserDetails,
+          beforeEnter: [removeQueryParams],
+        },
+      ]
+  In-Component Guards:
+    Вы можете напрямую определить средства защиты навигации по маршруту внутри компонентов
+
+    Using the options API:
+      You can add the following options to route components:
+        beforeRouteEnter
+        beforeRouteUpdate
+        beforeRouteLeave
+
+      У защиты beforeRouteEnter НЕТ доступа к this, поскольку защита вызывается до подтверждения навигации, поэтому
+        новый компонент входа еще даже не создан.
+      Однако вы можете получить доступ к экземпляру, передав обратный вызов next. Обратный вызов будет вызван при подтверждении навигации,
+        а экземпляр компонента будет передан обратному вызову в качестве аргумента:
+
+        beforeRouteEnter (to, from, next) {
+          next(vm => {
+            // access to component public instance via `vm`
+          })
+        }
+      Обратите внимание, что beforeRouteEnter — единственный охранник, который поддерживает передачу обратного вызова в next.
+      Для beforeRouteUpdate и beforeRouteLeave это уже доступно, поэтому передача обратного вызова не требуется и поэтому не поддерживается
+
+      Навигацию можно отменить, вернув false.
+      beforeRouteLeave (to, from) {
+        const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+        if (!answer) return false
+      }
+
+    Using the composition API:
+      onBeforeRouteUpdate и onBeforeRouteLeave
+
+    The Full Navigation Resolution Flow:
+      https://router.vuejs.org/guide/advanced/navigation-guards.html#The-Full-Navigation-Resolution-Flow
+
+Route Meta Fields:
+  Иногда вам может потребоваться прикрепить к маршрутам произвольную информацию, например: имена переходов или роли для контроля того,
+  кто может получить доступ к маршруту и т. д. Этого можно достичь с помощью meta property
+    const routes = [
+      {
+        path: '/posts',
+        component: PostsLayout,
+        children: [
+          {
+            path: 'new',
+            component: PostsNew,
+            // only authenticated users can create posts
+            meta: { requiresAuth: true },
+          },
+          {
+            path: ':id',
+            component: PostsDetail,
+            // anybody can read a post
+            meta: { requiresAuth: false },
+          },
+        ],
+      },
+    ]
+  Как нам получить доступ к этому метаполю?
+    Во-первых, каждый объект маршрута в конфигурации маршрутов называется 'route record'.
+    Например, с приведенной выше конфигурацией маршрута URL-адрес /posts/new будет соответствовать как родительского route record (путь: «/posts»),
+    так и дочернего route record (путь: «new»).
+    Все route record, соответствующие маршруту, отображаются в объекте $route в виде массива $route.matched
+    но Vue Router также предоставляет вам $route.meta, который представляет собой нерекурсивное объединение всех метаполей от родительского к дочернему.
+      router.beforeEach((to, from) => {
+        // instead of having to check every route record with
+        // to.matched.some(record => record.meta.requiresAuth)
+        if (to.meta.requiresAuth && !auth.isLoggedIn()) {
+          // this route requires auth, check if logged in
+          // if not, redirect to login page.
+          return {
+            path: '/login',
+            // save the location we were at to come back later
+            query: { redirect: to.fullPath },
+          }
+        }
+      })
+
+Data Fetching:
+  Иногда вам необходимо получить данные с сервера при активации маршрута.
+  Мы можем добиться этого двумя разными способами:
+    1. Fetching After Navigation: сначала выполните навигацию и извлеките данные в lifecycle hook входящего компонента.
+    2. Fetching Before Navigation: получение данных перед навигацией по маршруту, вход в guard и выполнение навигации после получения данных.
+  Технически оба варианта являются правильными
+
+  Fetching After Navigation:
+  Fetching Before Navigation:
+
+
+Best Practice:
+  1. -
+      // if possible use `name` and `params` to benefit from automatic URL encoding
+      router.push({ name: 'user', params: { username } }) // -> /user/eduardo
+  2. Вы можете передать третий аргумент любому защитнику навигации.
+    В этом случае вы должны вызывать next 'ровно один раз' при любом проходе через навигационную защиту.
+      // BAD
+      router.beforeEach((to, from, next) => {
+        if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+        // если пользователь не аутентифицирован, то `next` вызывается дважды
+        next()
+      })
+
+      // GOOD
+      router.beforeEach((to, from, next) => {
+        if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+        else next()
+      })
+
+Composition API:
+  Because we don't have access to this inside of setup, we cannot directly access this.$router or this.$route anymore.
+  Instead we use the useRouter and useRoute
+
+  Navigation Guards:
+    import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+
+  useLink:
+    https://router.vuejs.org/guide/advanced/composition-api.html#useLink
+
+Transitions:
+  https://router.vuejs.org/guide/advanced/transitions.html#Transitions
+
+Scroll Behavior:
+  При использовании маршрутизации на стороне клиента мы можем захотеть прокрутить вверх при переходе к новому маршруту
+  или сохранить положение прокрутки записей истории, как это делает реальная перезагрузка страницы.
+
+  Примечание. Эта функция работает только в том случае, если браузер поддерживает History.pushState.
+
+  При создании router instance вы можете предоставить функцию ScrollBehavior:
+    const router = createRouter({
+      history: createWebHashHistory(),
+      routes: [...],
+      scrollBehavior (to, from, savedPosition) {
+        // return desired position
+      }
+    })
+  Функция ScrollBehavior получает объекты маршрута to и from, такие как Navigation Guards.
+  Третий аргумент, savePosition, доступен только в том случае, если это всплывающая навигация (запускаемая кнопками браузера «Назад» и «Вперед»).
+
+  Функция может возвращать объект позиции ScrollToOptions:
+    const router = createRouter({
+      scrollBehavior(to, from, savedPosition) {
+        // always scroll to top
+        return { top: 0 }
+      },
+    })
+
+  Вы также можете передать селектор CSS или элемент DOM через el. В этом сценарии верх и лево будут рассматриваться как
+  относительные смещения этого элемента.
+    return {
+      // could also be
+      // el: document.getElementById('main'),
+      el: '#main',
+      top: -10,
+    }
+  Если возвращается ложное значение или пустой объект, прокрутка не произойдет.
+    const router = createRouter({
+      scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+          return savedPosition
+        } else {
+          return { top: 0 }
+        }
+      },
+    })
+
+    If your browser supports scroll behavior, you can make it smooth:
+    const router = createRouter({
+      scrollBehavior(to, from, savedPosition) {
+        if (to.hash) {
+          return {
+            el: to.hash,
+            behavior: 'smooth',
+          }
+        }
+      }
+    })
+
+Lazy Loading Routes:
+  При создании приложений с помощью бандлера пакет JavaScript может стать довольно большим и, таким образом, повлиять на время загрузки страницы.
+  Было бы более эффективно, если бы мы могли разделить компоненты каждого маршрута на отдельные фрагменты и загружать их только при посещении маршрута.
+
+  Vue Router поддерживает динамический импорт «из коробки», то есть вы можете заменить статический импорт динамическим:
+    const UserDetails = () => import('./views/UserDetails.vue')
+
+    const router = createRouter({
+      // ...
+      routes: [{ path: '/users/:id', component: UserDetails }],
+    })
+
+  "ВАЖНО!"
+    Опция компонента (и компонентов) принимает функцию, которая возвращает обещание компонента, и Vue Router будет получать его только при первом входе на страницу,
+      а затем использовать кешированную версию.
+    Это означает, что вы также можете использовать более сложные функции, если они возвращают обещание:
+      const UserDetails = () =>
+      Promise.resolve({
+        /* component definition */
+      })
+
+  В общем, рекомендуется всегда использовать динамический импорт для всех ваших маршрутов.
+
+  "ВАЖНО!"
+    Не используйте Async components для маршрутов.
+    Async components по-прежнему можно использовать внутри route components, но сами компоненты маршрута представляют собой всего лишь dynamic imports.
+
+  При использовании такого упаковщика, как webpack, разделение кода автоматически выигрывает.
+
+  Grouping Components in the Same Chunk:
+    https://router.vuejs.org/guide/advanced/lazy-loading.html#Grouping-Components-in-the-Same-Chunk
+
+Extending RouterLink:
+  https://router.vuejs.org/guide/advanced/extending-router-link.html#Extending-RouterLink
+
+Waiting for the result of a Navigation:
+  https://router.vuejs.org/guide/advanced/navigation-failures.html
+
+Dynamic Routing:
+  https://router.vuejs.org/guide/advanced/dynamic-routing.html
+
+Best Practice:
+  1. Lazy Loading Routes
+    В общем, рекомендуется всегда использовать динамический импорт для всех ваших маршрутов.
+    Примечание
+    Не используйте компоненты Async для маршрутов.
+
+
+
+
+
+Вопросы:
+  1. Как эту штуку правильно использовать?
+    // will match anything starting with `/user-` and put it under `$route.params.afterUser`
+    { path: '/user-:afterUser(.*)', component: UserGeneric },
+  2. Custom regex in params, посмотреть как можно использовать RegExp в маршрутах
+  3. Sensitive and strict route options (посмотреть что как использовать)
+  4. Optional parameters
+  5. Nested Routes best Practice
+  6. router.replace and router.push
+  7. Traverse history router.go(1)
+  8. Named Routes (плюсы и зачем использовать)
+  9. Named Views (как использовать правильно)
+  10. Redirect and Alias (как использовать правильно) (плюсы и зачем использовать)
+  11. Alias or redirect?
+  12. Passing Props to Route Components (Правильно ли использовать props вместо $route и наоборот)
+  13. props: object and function mode
+  14. Navigation Guards - best practice
+  15. meta fields
+  16. meta property
+  17. Data Fetching - а зачем он нужен?
+  18. Transitions
+  19. Lazy Loading Routes
+  20. Lazy Loading Routes (Promise.resolve({}))
+  21. Extending RouterLink

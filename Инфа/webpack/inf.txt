@@ -1,0 +1,131 @@
+Общие определения:
+  "source" code (./src)
+  "distribution" code (./dist)
+
+  "source code" - это код, который мы будем писать и редактировать.
+  "distribution code" - то минимизированный и оптимизированный результат процесса сборки, который в конечном итоге будет
+    загружен в браузер.
+
+  "dependency graphs" - граф, который строит webpack начиная с "entry point". Используется для определения и связывания
+    всех модулей, от которых зависит ваш проект.
+
+  "chunks" - набор модулей, которые группируются вместе. Это может быть один или несколько модулей, которые Webpack
+    объединяет в один файл в процессе сборки.
+    CSS-файлы, файлы изображений или HTML-файлы, которые были обработаны Webpack, не являются чанками
+    Важно отметить, что имена файлов чанков обычно содержат хэш, который меняется при изменении содержимого чанка. Это помогает с кешированием
+
+Entry point:
+  "Entry" - свойство, указывающее webpack, какой модуль(ы) / файл(ы) он должен использовать для начала построения dependency graphs проекта
+  Может быть задана 3 способами:
+    1. Для каждого свойства объекта создается свой файл.
+        entry: {
+          main: './src/index.js',
+          dashboard: './dashboard/dashboard.js'
+        }
+    2. Обычная конфигурация
+        entry: './src/index.js'
+    3. Если вы хотите, чтобы несколько модулей загружались в одну точку входа, вы можете использовать массив.
+      Все модули будут загружены, но только последний будет экспортирован.
+        entry: ['@babel/polyfill', 'src/index.js', 'otherfile', 'other something']
+    4.
+        entry: {
+          home: ['./home.js', './home.scss'],
+          account: ['./account.js', './account.scss'],
+        },
+  Свойства entry:
+    1. dependOn -
+    2. filename -
+    3. import -
+    4. library -
+    5. runtime -
+    6. publicPath -
+    7. path - путь, куда сохранять chunk
+
+Output point:
+  "Output" - свойство, указывающее webpack, куда выдавать/сохранять создаваемые им пакеты и как называть эти пакеты
+    (по умолчанию './dist/main.js')
+  Свойства output:
+
+Resolve:
+  Alias:
+    "Alias" - это способ сообщить webpack о том, где искать наш код, указав слово или символ, представляющий собой
+      частичную ссылку на место, где находится код.
+      resolve: {
+        alias: {
+          Utilities: path.resolve(__dirname, 'src/utilities/'),
+          xyz$: path.resolve(__dirname, 'path/to/file.js'),
+          // Будет игнорировать этот модуль
+          "path/to/ignored/module": false,
+          "ignored-module": false,
+          // Работает начиная с Webpack5
+          _: [
+            path.resolve(__dirname, 'src/utilities/'),
+            path.resolve(__dirname, 'src/templates/')
+          ]
+        },
+        extensions: ['.js', 'json', '.wasm'],
+        enforceExtension: true,
+        modules: ['node_modules']
+      },
+    Где:
+      1. alias - "Alias"
+      2. extensions - позволяет отказаться от расширения при импорте (import File from '../path/to/file';)
+        Если несколько файлов имеют одинаковое имя,но разные расширения, webpack разрешит тот файл, расширение которого
+          указано первым в массиве,и пропустит остальные.
+        использование resolve.extensions , как указано выше, 'переопределит массив по умолчанию' (['.js', '.json'])
+        Однако вы можете использовать '...' для доступа к расширениям по умолчанию: (extensions: ['.ts', '...'],)
+      3. enforceExtension - отключает extensions при true (import File from '../path/to/file' работать не будет, только '../path/to/file.js')
+      4. modules - разрешают импорты путем их поиска в указанных каталогах.
+        Данная конфигурация позволяет нам заменить это:
+          import Module from '../../../../node_modules/module';
+        на следующее:
+          import Module from 'module';
+      5. И т.д
+
+
+    '@', '~' являются псевдонимом vue-cli / webpack (ес проект сделан не через vue-cli, то псевдонимы свободны емое)
+
+    $ - может быть добавлен к ключам данного объекта для обозначения точного совпадения:
+    Что дало бы такие результаты:
+      import Test1 from 'xyz'; // Точное совпадение, поэтому путь / к / file.js разрешается и импортируется
+      import Test2 from 'xyz/file.js'; // Не точное совпадение, имеет место нормальное разрешение
+
+
+
+
+
+
+
+
+# Вопросы:
+  1. Multiply entry points, code splitting
+
+# Ну так
+main: './src/index.js' === main: () => './src/index.js'
+
+# path.resolve() and path.join()
+'__dirname' — это просто строка абсолютного пути к местоположению файла.
+path.join() - объединяет сегменты
+path.resolve() - преобразует последовательность путей в абсолютный путь
+На практике я не могу припомнить, чтобы path.join() или path.resolve() использовались без __dirname, что делает оба
+  метода приводит к абсолютному пути с корнем ОС, являющимся корнем.
+
+
+# CommonJS
+https://bobbyhadz.com/blog/javascript-uncaught-syntaxerror-unexpected-token-export
+https://reflectoring.io/nodejs-modules-imports/
+
+CommonJS - проект с целью определения универсального или "общего" стандарта для JavaScript, который не зависит от браузера.
+  Он предназначен для обеспечения модульности и повторного использования кода в JavaScript.
+
+Предоставляет такой функционал как:
+  1. exports
+    CommonJS:
+      module.exports = {}
+    ES6:
+      export default {}
+  2. import
+    CommonJS:
+      const Vuex = require('vuex')
+    ES6:
+      import Vuex from 'vuex'
