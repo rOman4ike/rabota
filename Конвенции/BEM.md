@@ -20,15 +20,27 @@
 - [Модификатор](#modifier)
   - [Что характеризует модификатор](#what-characterizes-modifier)
 
-## <a name="what-bem"></a>Что такое БЭМ
+## <a name="what-bem"></a>Что такое БЭМ [?]
 **БЭМ (блок, элемент, модификатор)** - методология, которая дает разработчикам разумный способ дать имена вашим CSS-классам,
 чтобы сделать их более прозрачными и понятными для других.
 
-> Благодаря верстке по БЭМ на страницах можно размещать сколько угодно экземпляров одного и того же блока.
+Одно из основных правил методологии BEM - использовать только селекторы классов.
+Поэтому мы **НЕ** используем.
+1. Идентификаторы
+2. Cелекторы тегов
+3. Универсальный селектор
+4. Вложенные селекторы
+5. Комбинированные селекторы
+6. Селекторы атрибутов
+
+Почему мы их не используем? Ответ: из-за увеличения специфичности и связности
+
+> [!IMPORTANT]
+> Это не касается всего, что находится в папке abstract (базовых стилей, вендоров и хелперов)
 
 ## <a name="block"></a>Блок
 
-**Блок** - это независимая сущность, которая представляет собой часть интерфейса на странице.
+**Блок** - это **независимая** сущность, которая представляет собой часть интерфейса на странице.
 Каждый из блоков имеет свою разметку, стили и скрипты. Название блока характеризует смысл ("Что это?" - "меню": menu, "кнопка": button)
 
 > Класс блока: "имя-блока"
@@ -36,32 +48,32 @@
 В интерфейсе может существовать несколько экземпляров одного и того же определения блока (например, различные кнопки или несколько меню).
 Также практически всегда блоки имеют корневой блок, который служит оберткой для других элементов блока (например почти все блоки находятся внутри блока container).
 
-```html
-<div class="container">
-  <header class="header">
-    <div class="header__logo"></div>
-    <div class="header__menu-list"></div>
-  </header>
+<details>
+  <summary>
+    Пример HTML
+  </summary>
 
-  <main class="main">
-    <section clas="about">
-      <button class="btn"/>
-    </section>
-    <section class="search">
-      <form class="search__form">
-        <input class="search__input">
+  ```html
+  <div class="container">
+    <header class="header">
+      <img class="logo">
+    </header>
+
+    <main class="main">
+      <section clas="about">
         <button class="btn"/>
-      </form>
-    </section>
-  </main>
+      </section>
+      <section class="search">
+      </section>
+    </main>
 
-  <footer class="footer">
-    <small class="copyright">
-      Copyright
-    </small>
-  </footer>
-</div>
-```
+    <footer class="footer">
+      <small class="copyright">
+      </small>
+    </footer>
+  </div>
+  ```
+</details>
 
 ### Примеры блоков:
 - Навигационное меню;
@@ -75,7 +87,7 @@
 1. Блокам нельзя писать внешние размеры и позиционирование (margin, position)
 2. Внутри одних блоков могут быть сколько угодно блоков
 
-Каждый блок может состоять из элементов, которые являются составной частью блока и имеют с ним тесную связь.
+Каждый блок может состоять из **элементов**, которые являются составной частью блока и имеют с ним тесную связь.
 
 ### <a name="header-example"></a>Пример
 Разберем шапку сайта.
@@ -96,16 +108,16 @@
       <div class="header__top">
         <nav class="menu">
           <ul class="menu__list">
-            <li class="menu__list-item">
+            <li class="menu__item">
               <a href="#" class="menu__link">Tab 1</a>
             </li>
-            <li class="menu__list-item">
+            <li class="menu__item">
               <a href="#" class="menu__link">Tab 2</a>
             </li>
-            <li class="menu__list-item">
+            <li class="menu__item">
               <a href="#" class="menu__link">Tab 3</a>
             </li>
-            <li class="menu__list-item">
+            <li class="menu__item">
               <a href="#" class="menu__link">Tab 4</a>
             </li>
           </ul>
@@ -144,7 +156,7 @@
 - logo block;
 - head block.
 
-Внутри head block мы можем двигать блоки как захотим. К примеру мы можем поменять блоки logo block и search block местами зная что внешний вид от этого не изменится в худшую сторону (из-за независимости блоков).
+Внутри head block мы можем двигать блоки как захотим. К примеру мы можем поменять блоки logo block и search block местами зная что внешний вид от этого не изменится в худшую сторону (из-за **независимости** блоков).
 
 ---
 
@@ -155,15 +167,15 @@
 
 Элементы не могут существовать за пределами блока, к которому принадлежат. **Не все блоки имеют элементы, но все элементы имеют родительский блок**.
 ```html
-<!-- Плохо: элемент находится не внутри своего блока -->
-<div class="about__header"></div>
-
 <!-- Хорошо -->
 <div class="about">
   <div class="about__inner">
     <div class="about__items"></div>
   </div>
 </div>
+
+<!-- Плохо: элемент находится не внутри своего блока -->
+<div class="about__header"></div>
 ```
 
 ### Примеры элементов:
@@ -180,6 +192,9 @@
 ```html
 <div class="about">
   <div class="about__inner">
+    <!-- Хорошо -->
+    <div class="about__items"></div>
+
     <!-- Плохо: элемент элемента не бывает-->
     <div class="about__inner__items"></div>
   </div>
@@ -198,16 +213,16 @@
   ```html
   <nav class="menu">
     <ul class="menu__list">
-      <li class="menu__list-item">
+      <li class="menu__item">
         <a href="#" class="menu__link">Tab 1</a>
       </li>
-      <li class="menu__list-item">
+      <li class="menu__item">
         <a href="#" class="menu__link">Tab 2</a>
       </li>
-      <li class="menu__list-item">
+      <li class="menu__item">
         <a href="#" class="menu__link">Tab 3</a>
       </li>
-      <li class="menu__list-item">
+      <li class="menu__item">
         <a href="#" class="menu__link">Tab 4</a>
       </li>
     </ul>
@@ -224,15 +239,23 @@
 ## <a name="modifier"></a> Модификатор
 **Модификатор** - сущность, которая определяет внешний вид, состояние и поведение элемента или блока. Модификатор может задаваться как блоку, так и элементу. Название характеризует внежний вид "Какой размер?", "Какая тема?"
 
-> Класс модификатора: отделяют от имени блока или элемента двойным дефисом (--)<br>"имя-блока--значение-модификатора" ИЛИ<br>"имя-блока__имя-элемента--значение-модификатора" ИЛИ<br>"имя-блока__имя-элемента--имя-модификатора--значение-модификатора".
+> Класс модификатора: отделяют от имени блока или элемента двойным дефисом (--)<br>"имя-блока--значение-модификатора" ИЛИ<br>"имя-блока__имя-элемента--значение-модификатора" ИЛИ<br>"имя-блока__имя-элемента--имя-модификатора--значение-модификатора" [скорее всего не будет использовать этот вариант].
 
-Для одного элемента допускается использование нескольких модификаторов, если они представляют разные свойства. **Модификатор нельзя использовать самостоятельно**.
+Для одного элемента/блока допускается использование нескольких модификаторов, если они представляют разные свойства. **Модификатор нельзя использовать самостоятельно**.
 ```html
-<button class="button button--active">...</button>
-
+<!-- Хорошо -->
+<button class="button button--primary button--inactive">
+</button>
 <div class="card card--theme-transparent">
   <div class="card__header"></div>
   <div class="card__content"></div>
+</div>
+
+<!-- Плохо: модификатор используется без блока -->
+<div class="form--primary">
+  <div class="form__group">
+    <input class="form__input">
+  </div>
 </div>
 ```
 
@@ -245,6 +268,12 @@
 - Модификатор нельзя использовать самостоятельно
 
 ```html
+<!-- Хорошо -->
+<div class="card card--theme-transparent">
+  <div class="card__header"></div>
+  <div class="card__content"></div>
+</div>
+
 <!-- Плохо: используются два значения модификатора theme -->
 <div class="card card--theme-transparent card--theme-dark">
   <div class="card__header"></div>
@@ -252,17 +281,10 @@
 </div>
 
 <!-- Хорошо -->
-<div class="card card--theme-transparent">
-  <div class="card__header"></div>
-  <div class="card__content"></div>
-</div>
+<button class="button button--primary button--active">...</button>
 
 <!-- Плохо: модификаторы используются без блока -->
 <button class="button--primary button--active">...</button>
-
-<!-- Хорошо -->
-<button class="button button--primary button--active">...</button>
-
 ```
 
 ### Примеры модификаторов
@@ -285,16 +307,16 @@
 
       <nav class="menu menu--theme-smooth">
         <ul class="menu__list">
-          <li class="menu__list-item">
+          <li class="menu__item">
             <a href="#" class="menu__link">Tab 1</a>
           </li>
-          <li class="menu__list-item">
+          <li class="menu__item">
             <a href="#" class="menu__link">Tab 2</a>
           </li>
-          <li class="menu__list-item">
+          <li class="menu__item">
             <a href="#" class="menu__link">Tab 3</a>
           </li>
-          <li class="menu__list-item">
+          <li class="menu__item">
             <a href="#" class="menu__link">Tab 4</a>
           </li>
         </ul>
@@ -455,8 +477,6 @@
 ## Стили
 https://ru.bem.info/methodology/css/#%D0%BF%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF-%D0%B5%D0%B4%D0%B8%D0%BD%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9-%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D1%81%D1%82%D0%B8
 
-## БЭМ и Vue
-
 ## Структура файлов
 Архитектура стилей следующая:
   1. commons - папка с общими стилями, которые будут использовать другие приложения (переформулировать)
@@ -476,8 +496,8 @@ https://ru.bem.info/methodology/css/#%D0%BF%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF-
       1. Все инструменты сторонних производителей (фреймворки, библиотеки, помощники) должны быть разделены по папкам
       2. Если вам нужно переопределить секцию какого-либо вендора, заводим папку vendors-redefine/, в которой вы можете располагать файлы, названные точно так же, как и вендоры, которые они переопределяют.
       Например, vendors-redefine/_bootstrap.scss - это файл, содержащий все правила CSS, предназначенные для повторного объявления некоторых CSS Bootstrap по умолчанию. Это сделано для того, чтобы избежать редактирования самих файлов поставщиков, что, как правило, не является хорошей идеей
-  6. vendors-redefine - используется для переопределения стилей сторонних библиотек
-  7. themes - в этой директории находятся различные стили, необходимые для каждой темы.
+  6. vendors-redefine (ХЗ) - используется для переопределения стилей сторонних библиотек
+  7. themes (ХЗ) - в этой директории находятся различные стили, необходимые для каждой темы.
   6. application.sass - для импорта всех наших стилей из других папок.
 
 <details>
@@ -687,6 +707,8 @@ CSS-реализация:
 }
 ```
 
+## БЭМ и Vue
+
 ### Переопределение
 Можно :)
 
@@ -696,10 +718,9 @@ CSS-реализация:
 1. https://nicothin.pro/idiomatic-pre-CSS/#bem-elem - максимально короткое объяснение БЭМа
 2. https://github.com/yoksel/common-words <br> https://github.com/nicothin/idiomatic-pre-CSS/blob/gh-pages/words_and_abbreviations.md - если сложно придумать название для класса
 
-3. https://www.smashingmagazine.com/2018/06/bem-for-beginners/#modifiers-and-mixes
-
 
 Для себя
 
 4. https://gist.github.com/radist2s/0b74fb70d3cf4cc4a9baaf72921f2d41
 5. https://openclassrooms.com/en/courses/5625786-produce-maintainable-css-with-sass/6009176-use-bem-selectors-with-sass
+6. https://gist.github.com/zoxon/6e32de9f0e43910a79df
