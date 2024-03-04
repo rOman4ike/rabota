@@ -22,6 +22,7 @@ module.exports = (env) => {
     },
     output: {
       filename: '[name].[id].[chunkhash:8].js',
+      chunkFilename: "[name].chunk.[chunkhash:8].js",
       path: path.resolve(__dirname, './dist'),
       clean: true
     },
@@ -31,6 +32,15 @@ module.exports = (env) => {
     optimization: {
       usedExports: true,
       minimize: true,
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
+        }
+      },
       minimizer: [
         new TerserPlugin({
           terserOptions: {

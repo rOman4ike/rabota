@@ -1,10 +1,13 @@
 import { home, home2 } from './home.js'
+import $ from "jquery";
+
 
 document.addEventListener('click', function() {
-  import('./async.js').then(data => {
+  import(/* webpackChunkName: "async" */ './async.js').then(data => {
     console.log('loaded');
   })
 })
+console.log($);
 
 home()
 
