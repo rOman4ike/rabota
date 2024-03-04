@@ -818,20 +818,26 @@ CSS-реализация:
 Каждый блок должен находиться в отдельном файле.
 Имя файла должно равняться названию блока.
 
-```scss
-// Filename: _btn.sass
-.btn
-  $font-size: 0.5em
+<details>
+  <summary>
+    Пример SASS
+  </summary>
 
-  display: inline-block
-  width: $font-size
-  height: $font-size
-  background-color: antiquewhite
-  border-radius: 100%
+  ```scss
+  // Filename: _btn.sass
+  .btn
+    $font-size: 0.5em
 
-  &--highlighted
-    background-color: yellow
-```
+    display: inline-block
+    width: $font-size
+    height: $font-size
+    background-color: antiquewhite
+    border-radius: 100%
+
+    &--highlighted
+      background-color: yellow
+  ```
+</details>
 
 # Для себя
 
