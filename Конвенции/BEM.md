@@ -88,7 +88,7 @@
 ### <a name="independent"></a>Независимость
 **Независисая сущность** - Сущность, которая не зависит от внешней среды.
 
-Ниже представлен пример независимости
+Ниже представлен пример
 
 <img src="./independent-example-1.png" style="width: 70%">
 
@@ -1034,20 +1034,28 @@ CSS-реализация:
   main/
   |
   |- abstracts/
+  | |- __application.sass
   |
   |- base/
+  | |- __application.sass
   |
   |- components/
+  | |- __application.sass
   |
   |- pages/
+  | |- __application.sass
   |
   |- vendors/
+  | |- __application.sass
   |
   |- vendors-redefine/
+  | |- __application.sass
   |
   |- application.sass
   ```
 </details>
+
+Для каждой папки создается файл __application.sass, в который импортируется все файлы папки
 
 Структура внутри этих папок:
   1. abstracts - собраны все инструменты и помощники Sass, используемые в проекте.
@@ -1067,6 +1075,7 @@ CSS-реализация:
   |- _mixins.sass
   |- _placeholders.sass
   |- _functions.sass
+  |- __application.sass
   ```
 </details>
 
@@ -1083,6 +1092,7 @@ CSS-реализация:
   |- _base.sass
   |- _fonts.sass
   |- _helpers.sass
+  |- __application.sass
   ```
 </details>
 
@@ -1100,6 +1110,7 @@ CSS-реализация:
   |- _input.sass
   |- _modal.sass
   |- _header.sass
+  |- __application.sass
   ```
 </details>
 
@@ -1120,6 +1131,7 @@ CSS-реализация:
   |- report/
   |   |- _event-edit.sass
   |   |- _event-show.sass
+  |- __application.sass
   ```
 </details>
 
@@ -1139,6 +1151,7 @@ CSS-реализация:
   |- fontawesome/
   |- neat/
   |- normalize/
+  |- __application.sass
   ```
 </details>
 
@@ -1155,6 +1168,7 @@ CSS-реализация:
   |
   |- _bootstrap.sass
   |- _jquery-ui.sass
+  |- __application.sass
   ```
 </details>
 
@@ -1173,9 +1187,13 @@ CSS-реализация:
   |- abstracts
   |   |- _variables.sass
   |   |- _mixins.sass
+  |   |- __application.sass
   |- base
   |   |- _base.sass
   |   |- _fonts.sass
+  |   |- __application.sass
+  |
+  |- application.sass
 
   main/
   |
@@ -1183,33 +1201,54 @@ CSS-реализация:
   |	|- _fonts.sass
   |	|- _mixins.sass
   |	|- _variables.sass
+  | |- __application.sass
   |
   |- components/
   |	|- _button.sass
   |	|- _input.sass
   |	|- _modal.sass
   | |- _header.sass
+  | |- __application.sass
   |
   |- pages/
   | |- event/
-  |     |- _event-index.sass
-  |     |- _event-show.sass
-  |     |- _event-edit.sass
+  | | |- _event-index.sass
+  | | |- _event-show.sass
+  | | |- _event-edit.sass
+  | |
   | |- report/
-  |     |- _event-edit.sass
-  |     |- _event-show.sass
+  | | |- _event-edit.sass
+  | | |- _event-show.sass
+  | |
+  | |- __application.sass
   |
   |- vendors/
   |	|- bourbon/
   |	|- fontawesome/
   |	|- neat/
   |	|- normalize/
+  | |- __application.sass
   |
   |- vendors-redefine/
   | |- bootstrap/
-  |     |- bootstrap.sass
+  | |  |- bootstrap.sass
+  | |
+  | |- __application.sass
   |
   |- application.sass
+  ```
+</details>
+
+<details open>
+  <summary>
+    Пример __application.sass папки main/components
+  </summary>
+
+  ```scss
+  @import './button'
+  @import './input'
+  @import './modal'
+  @import './header'
   ```
 </details>
 
@@ -1223,35 +1262,22 @@ CSS-реализация:
   @import '../commons/application'
 
   // Abstracts
-  @import './abstracts/variables'
-  @import './abstracts/mixins'
-  @import './abstracts/placeholders'
-  @import './abstracts/functions'
+  @import './abstracts/_application'
 
   // Vendors
-  @import './vendors/tusur_header_addons/tusur_header_addons'
-  @import './vendors/normalize/normalize'
-  @import './vendors/bootstrap/bootstrap'
+  @import './vendors/_application'
 
   // Vendors-redefine
-  @import './vendors-redefine/bootstrap/bootstrap'
+  @import './vendors-redefine/_application'
 
   // Theme
-  @import './themes/dark'
-  @import './themes/christmas'
+  @import './themes/_application'
 
   // Components
-  @import './components/btn'
-  @import './components/card'
-  @import './components/collapse'
-  @import './components/form'
-  @import './components/header'
+  @import './components/_application'
 
   // Layouts
-  @import './layouts/event/edit'
-  @import './layouts/event/index'
-  @import './layouts/event/show'
-  @import './layouts/report/index'
+  @import './pages/_application'
   ```
 </details>
 
