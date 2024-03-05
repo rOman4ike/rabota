@@ -1061,11 +1061,11 @@ CSS-реализация:
   ```text
   abstracts/
   |
-  |- _variables.sass
+  |- __application.sass
+  |- _functions.sass
   |- _mixins.sass
   |- _placeholders.sass
-  |- _functions.sass
-  |- __application.sass
+  |- _variables.sass
   ```
 </details>
 
@@ -1079,10 +1079,10 @@ CSS-реализация:
   ```text
   base/
   |
+  |- __application.sass
   |- _base.sass
   |- _fonts.sass
   |- _helpers.sass
-  |- __application.sass
   ```
 </details>
 
@@ -1096,11 +1096,11 @@ CSS-реализация:
   ```text
   components/
   |
+  |- __application.sass
   |- _button.sass
+  |- _header.sass
   |- _input.sass
   |- _modal.sass
-  |- _header.sass
-  |- __application.sass
   ```
 </details>
 
@@ -1115,12 +1115,14 @@ CSS-реализация:
   pages/
   |
   |- event/
+  |   |- _event-edit.sass
   |   |- _event-index.sass
   |   |- _event-show.sass
-  |   |- _event-edit.sass
+  |
   |- report/
   |   |- _event-edit.sass
   |   |- _event-show.sass
+  |
   |- __application.sass
   ```
 </details>
@@ -1141,6 +1143,7 @@ CSS-реализация:
   |- fontawesome/
   |- neat/
   |- normalize/
+  |
   |- __application.sass
   ```
 </details>
@@ -1156,9 +1159,9 @@ CSS-реализация:
   ```text
   vendors-redefine/
   |
+  |- __application.sass
   |- _bootstrap.sass
   |- _jquery-ui.sass
-  |- __application.sass
   ```
 </details>
 
@@ -1175,36 +1178,37 @@ CSS-реализация:
   commons/
   |
   |- abstracts
-  |   |- _variables.sass
-  |   |- _mixins.sass
   |   |- __application.sass
+  |   |- _mixins.sass
+  |   |- _variables.sass
+  |
   |- base
+  |   |- __application.sass
   |   |- _base.sass
   |   |- _fonts.sass
-  |   |- __application.sass
   |
   |- application.sass
 
   main/
   |
   |- abstracts/
+  | |- __application.sass
   |	|- _fonts.sass
   |	|- _mixins.sass
   |	|- _variables.sass
-  | |- __application.sass
   |
   |- components/
+  | |- __application.sass
   |	|- _button.sass
   |	|- _input.sass
   |	|- _modal.sass
   | |- _header.sass
-  | |- __application.sass
   |
   |- pages/
   | |- event/
+  | | |- _event-edit.sass
   | | |- _event-index.sass
   | | |- _event-show.sass
-  | | |- _event-edit.sass
   | |
   | |- report/
   | | |- _event-edit.sass
