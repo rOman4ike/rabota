@@ -1,72 +1,120 @@
-<header class="header">
-  <div class="header__inner">
+<!DOCTYPE html>
+<html lang="en">
 
-    <div class="header__top">
-      <nav class="menu">
-        <ul class="menu__list">
-          <li class="menu__list-item">
-            <a href="#" class="menu__link">Tab 1</a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      border-bottom: 1px solid;
+    }
+
+    .container {
+      max-width: 1260px;
+      padding: 0 30px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header__logo {
+      margin-right: 30px;
+    }
+
+    .header__sitename {
+      display: inline-block;
+      vertical-align: 17px;
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <header class="header">
+      <div class="header__logo">
+        <img src="https://tusur.ru/assets/logotype-f018cf89deebba58749ec8a3a2bb939b0d4e4c069e9de46a794f93a87698528b.svg"
+          class="header__img logo">
+        <span class="header__sitename">
+          ТУСУР
+        </span>
+      </div>
+
+      <nav class="nav">
+        <ul class="menu">
+          <li class="menu__item">
+            <a class="link" href="#">
+              Link 1
+            </a>
           </li>
-          <li class="menu__list-item">
-            <a href="#" class="menu__link">Tab 2</a>
+          <li class="menu__item">
+            <a class="link" href="#">
+              Link 2
+            </a>
           </li>
-          <li class="menu__list-item">
-            <a href="#" class="menu__link">Tab 3</a>
-          </li>
-          <li class="menu__list-item">
-            <a href="#" class="menu__link">Tab 4</a>
+          <li class="menu__item">
+            <a class="link" href="#">
+              Link 3
+            </a>
           </li>
         </ul>
       </nav>
+    </header>
+    <hr>
+  </div>
+</body>
+
+</html>
+
+<aside class="aside">
+  <div class="aside__group">
+    <ul class="aside__tags article-tags">
+      <li class="article-tags__tag">
+        Methodology
+      </li>
+    </ul>
+
+    <div class="aside__social social-likes">
+      <a class="social-likes__service social-likes__service--type-facebook" href="#"></a>
+      <a class="social-likes__service social-likes__service--type-vk" href="#"></a>
+      <a class="social-likes__service social-likes__service--type-twitter"href="#"></a>
     </div>
 
-    <div class="header__bottom">
-      <div class="logo">
-        <img src="#" class="logo__img">
-      </div>
-
-      <div class="search">
-        <form class="search__form">
-          <input type="search" class="search__input">
-        </form>
-      </div>
-
-      <div class="auth">
-        <form class="auth__form">
-          <input type="text" class="auth__input">
-          <input type="password" class="auth__input">
-          <button class="auth__btn">sign in</button>
-        </form>
+    <div class="aside__rating rating-stars">
+      <div class="rating-stars__title">Оцените статью</div>
+      <div class="rating-stars__stars">
+        <span class="rating-stars__item">★</span>
+        <span class="rating-stars__item">★</span>
+        <span class="rating-stars__item">★</span>
+        <span class="rating-stars__item">★</span>
+        <span class="rating-stars__item">★</span>
       </div>
     </div>
-
   </div>
-</header>
 
-
-<footer class="footer">
-  <div class="footer__inner">
-
-    <nav class="menu menu--theme-smooth">
-      <ul class="menu__list">
-        <li class="menu__list-item">
-          <a href="#" class="menu__link">Tab 1</a>
-        </li>
-        <li class="menu__list-item">
-          <a href="#" class="menu__link">Tab 2</a>
-        </li>
-        <li class="menu__list-item">
-          <a href="#" class="menu__link">Tab 3</a>
-        </li>
-        <li class="menu__list-item">
-          <a href="#" class="menu__link">Tab 4</a>
-        </li>
-      </ul>
-    </nav>
-
-    <small class="footer__copyright">
-      © 2022 Company
-    </small>
-
+  <div class="aside__amendments amendments">
+    Сообщить об ошибке на
+    <a class="link" href="#">Гитхабе</a>
+    или исправить в
+    <a class="link" href="#">prose.io.</a>
   </div>
-</footer>
+</aside>

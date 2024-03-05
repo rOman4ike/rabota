@@ -1,6 +1,5 @@
 # Что переделать
   3. Микс - Сделать картиночку в примере
-  7. Структура файлов - pages - папка под вопросом
 
 # БЭМ
 
@@ -676,37 +675,7 @@
 3. Элемент с элементом
 
 ### <a name="mix-example"></a>Пример
-Блоки могут отличаться не только визуально, но и семантически. Например, форма поиска, форма регистрации и форма заказа тортов — это все формы. В верстке они реализованы с помощью блока «форма», но общих стилей не имеют. Такие различия невозможно устранить с помощью модификатора. Вы можете определить общие стили для таких блоков, но не сможете повторно использовать код.
-
-<details open>
-  <summary>
-    Пример SCSS
-  </summary>
-
-  ```sass
-  .cake,
-  .search,
-  .register {
-    ...
-  }
-  ```
-</details>
-
-Вы можете использовать микс для создания семантически разных блоков одной и той же формы. Селектор класса .form описывает все стили, которые можно применить к любой форме (cake, search или register):
-
-<details open>
-  <summary>
-    Пример SCSS
-  </summary>
-
-  ```scss
-  .form {
-    ...
-  }
-  ```
-</details>
-
-Теперь из универсальной формы можно сделать форму поиска.
+У нас имеется шапка страницы с ссылками, рейтингом и т.д.:
 
 <details open>
   <summary>
@@ -714,12 +683,121 @@
   </summary>
 
   ```html
-  <form class="form search" action="/">
-    <input class="form__search" name="s">
-    <input class="form__submit" type="submit">
-  </form>
+  <aside class="aside">
+    <div class="aside__group">
+      <ul class="article-tags">
+        <li class="article-tags__tag">
+          Methodology
+        </li>
+      </ul>
+
+      <div class="social-likes">
+        <a class="social-likes__service social-likes__service--type-facebook" href="#"></a>
+        <a class="social-likes__service social-likes__service--type-vk" href="#"></a>
+        <a class="social-likes__service social-likes__service--type-twitter"href="#"></a>
+      </div>
+
+      <div class="rating-stars">
+        <div class="rating-stars__title">Оцените статью</div>
+        <div class="rating-stars__stars">
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="amendments">
+      Сообщить об ошибке на
+      <a class="link" href="#">Гитхабе</a>
+      или исправить в
+      <a class="link" href="#">prose.io.</a>
+    </div>
+  </aside>
   ```
 </details>
+
+Выглядит она следующим образом
+
+<img src="./mix-example-1.png">
+
+Весь контент выглядит слипшимся, необходимо добавить отступы. Но как мы помним для блоков нельзя задавать отступы (margin)
+
+Тут на помощь приходит микс. Добавим дополнительные классы
+
+<details open>
+  <summary>
+    Пример HTML
+  </summary>
+
+  ```html
+  <aside class="aside">
+    <div class="aside__group">
+      <ul class="aside__tags article-tags">
+        <li class="article-tags__tag">
+          Methodology
+        </li>
+      </ul>
+
+      <div class="aside__social social-likes">
+        <a class="social-likes__service social-likes__service--type-facebook" href="#"></a>
+        <a class="social-likes__service social-likes__service--type-vk" href="#"></a>
+        <a class="social-likes__service social-likes__service--type-twitter"href="#"></a>
+      </div>
+
+      <div class="aside__rating rating-stars">
+        <div class="rating-stars__title">Оцените статью</div>
+        <div class="rating-stars__stars">
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+          <span class="rating-stars__item">★</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside__amendments amendments">
+      Сообщить об ошибке на
+      <a class="link" href="#">Гитхабе</a>
+      или исправить в
+      <a class="link" href="#">prose.io.</a>
+    </div>
+  </aside>
+  ```
+</details>
+
+И добавим следующие стили:
+
+<details open>
+  <summary>
+    Пример SCSS
+  </summary>
+
+  ```scss
+
+  .aside {
+
+    &__tags {
+      margin: 0 16px 8px 0;
+    }
+
+    &__social {
+      margin: 0 26px 0 0;
+    }
+
+    &__rating {
+      margin: 0 16px 8px 0;
+    }
+  }
+  ```
+</details>
+
+В итоге получаем следующий результат:
+
+<img src="./mix-example-2.png">
 
 ## <a name="css"></a>CSS
 
