@@ -1,5 +1,9 @@
-# Что переделать
-  1. -
+# Вопросы
+  1. Оставляем-ли папку abstracts?
+  2. Переименовываем-ли __application.sass
+  3. Как лучше писать модификатор: "card--theme--dark" или "card--theme-dark"
+  4. Названия файлов пишем через - "tusur-header-addons" или "tusur_header_addons"
+  5. "reports-search__field-state", "reports-search__field-participant_type" - что будем такую штуку использовать?
 
 # БЭМ
 
@@ -7,8 +11,8 @@
 - [Что такое БЭМ](#what-bem)
 - [Блок](#block)
   - [Независимость](#independent)
-  - [Примеры блоков](#block-examples)
   - [Правила использования блоков](#block-rules)
+  - [Примеры блоков](#block-examples)
   - [Название файла](#block-file-name)
   - [Пример](#block-example)
 - [Элемент](#element)
@@ -39,7 +43,7 @@
 ## <a name="block"></a>Блок
 
 **Блок** - это [**независимая**](#independent) сущность, которая представляет собой часть интерфейса на странице.
-Каждый из блоков может иметь свою разметку, стили и скрипты. Название блока характеризует смысл ("Что это?" - "меню": menu, "кнопка": button)
+Каждый из блоков может иметь свою разметку, стили и скрипты. Название блока характеризует смысл ("Что это?" - "меню": menu, "кнопка": button).
 
 > Наименование класса блока:<br>"имя-блока"
 
@@ -74,12 +78,12 @@
   ```
 </details>
 
-В примере выше, в качестве блоков выступает все теги, у которых есть класс (container, header, logo и т.д.)
+В примере выше, в качестве блоков выступает все теги, у которых есть класс (container, header, logo и т.д.).
 
 ### <a name="independent"></a>Независимость
 **Независисая сущность** - Сущность, которая не зависит от внешней среды.
 
-Ниже представлен пример
+Ниже представлен пример:
 
 <img src="./independent-example-1.png" style="width: 70%">
 
@@ -169,7 +173,7 @@
   ```
 </details>
 
-Так как блоки являются **независимыми**, мы можем менять их на странице местами, зная что мы ничего не сломаем
+Так как блоки являются **независимыми**, мы можем менять их на странице местами, зная что мы ничего не сломаем.
 
 <img src="./independent-example-2.png" style="width: 70%">
 
@@ -245,7 +249,11 @@
   ```
 </details>
 
-Но для такого поведения на блоки введены [правила](#block-rules)
+Но для такого поведения на блоки введены правила.
+
+### <a name="block-rules"></a>Правила использования блоков
+1. Блокам нельзя писать внешние размеры и позиционирование (margin, position);
+2. Внутри одних блоков могут быть сколько угодно блоков.
 
 ### <a name="block-examples"></a>Примеры блоков:
 - Навигационное меню;
@@ -254,10 +262,6 @@
 - Кнопка;
 - Список;
 - Шапка страницы.
-
-### <a name="block-rules"></a>Правила использования блоков
-1. Блокам нельзя писать внешние размеры и позиционирование (margin, position)
-2. Внутри одних блоков могут быть сколько угодно блоков
 
 ### <a name="block-file-name"></a>Название файла
 Каждый блок должен находиться в отдельном файле.
@@ -269,7 +273,7 @@
   </summary>
 
   ```scss
-  // Filename: _btn.scss
+  // Название файла: _btn.scss
   .btn {
     $font-size: 0.5em;
 
@@ -368,7 +372,7 @@
 ---
 
 ## <a name="element"></a>Элемент
-**Элемент** - часть блока, зависимая от него семантически и функционально. Название элемента, как и название блока, характеризует смысл («Что это?» — "пункт": item, "текст": text)
+**Элемент** - часть блока, зависимая от него семантически и функционально. Название элемента, как и название блока, характеризует смысл («Что это?» — "пункт": item, "текст": text).
 
 > Наименование класса элемента: отделяется двойным подчеркиванием.<br>"имя-блока__имя-элемента".
 
@@ -460,8 +464,6 @@
   </nav>
   ```
 </details>
-
-Здесь имеются 4 элемента
 
 Вкладки (Tab 1, Tab 2, Tab 3, Tab 4) принадлежат menu block и не могут использоваться вне блока!
 
@@ -628,16 +630,12 @@
 </details>
 
 Внешний вид верхнего и нижнего меню заметно отличается.
-По HTML нижнее и верхнее меню отличаются только тем, что у нижнего в блоке добавился класс "menu--theme-round"
+По HTML нижнее и верхнее меню отличаются только тем, что у нижнего в блоке добавился класс "menu--theme-round".
 
-## <a name="#mix"></a>Микс
-**Микс** - способ комбинирования разных БЭМ-сущностей для одного DOM-узла.
+## <a name="mix"></a>Микс
+**Микс** - способ комбинирования разных БЭМ-сущностей для одного DOM-узла. Микс позволяет совмещать поведение и стили нескольких сущностей без дублирования кода.
 
 > **БЭМ-сущности** - блоки, элементы и модификаторы.
-
-Позволяют:
-1. Совмещать поведение и стили нескольких сущностей без дублирования кода;
-2. Одинаково форматировать разные HTML-элементы.
 
 <details open>
   <summary>
@@ -661,14 +659,16 @@
 
 ### <a name="mix-combine"></a>Что можно комбинировать
 Комбинировать можно все БЭМ-сущности:
-1. Блок с блоком
-2. Блок с элементом
-3. Элемент с элементом
+1. Блок с блоком;
+2. Блок с элементом;
+3. Элемент с элементом.
 
 ### <a name="mix-example"></a>Пример
 У нас имеется шапка страницы с ссылками, рейтингом и т.д.:
 
-<details open>
+<img src="./mix-example-1.png">
+
+<details>
   <summary>
     Пример HTML
   </summary>
@@ -710,13 +710,11 @@
   ```
 </details>
 
-Выглядит она следующим образом
+Весь контент выглядит слипшимся, необходимо добавить отступы. Но как мы помним для блоков нельзя задавать отступы (margin).
 
-<img src="./mix-example-1.png">
+Тут на помощь приходит микс. Добавим дополнительные классы и стили, получаем следующий результат.
 
-Весь контент выглядит слипшимся, необходимо добавить отступы. Но как мы помним для блоков нельзя задавать отступы (margin)
-
-Тут на помощь приходит микс. Добавим дополнительные классы
+<img src="./mix-example-2.png">
 
 <details open>
   <summary>
@@ -726,18 +724,21 @@
   ```html
   <aside class="aside">
     <div class="aside__group">
+      <!-- Добавлен класс aside__tags -->
       <ul class="aside__tags article-tags">
         <li class="article-tags__tag">
           Methodology
         </li>
       </ul>
 
+      <!-- Добавлен класс aside__social -->
       <div class="aside__social social-likes">
         <a class="social-likes__service social-likes__service--type-facebook" href="#"></a>
         <a class="social-likes__service social-likes__service--type-vk" href="#"></a>
         <a class="social-likes__service social-likes__service--type-twitter"href="#"></a>
       </div>
 
+      <!-- Добавлен класс aside__rating -->
       <div class="aside__rating rating-stars">
         <div class="rating-stars__title">Оцените статью</div>
         <div class="rating-stars__stars">
@@ -750,7 +751,7 @@
       </div>
     </div>
 
-    <div class="aside__amendments amendments">
+    <div class="amendments">
       Сообщить об ошибке на
       <a class="link" href="#">Гитхабе</a>
       или исправить в
@@ -786,15 +787,11 @@
   ```
 </details>
 
-В итоге получаем следующий результат:
-
-<img src="./mix-example-2.png">
-
 ## <a name="css"></a>CSS
 
 ### <a name="css-specificity"></a>Вложенность и специфичность CSS
 > [!IMPORTANT]
-> Это не касается всего, что находится в папке base (базовых стилей, вендоров и хелперов)
+> Это не касается всего, что находится в папке base (базовых стилей, вендоров и хелперов).
 
 Одно из основных правил методологии BEM - использовать **ТОЛЬКО** селекторы классов.
 ```scss
@@ -803,13 +800,13 @@
 }
 ```
 Поэтому мы **НЕ** используем.
-1. Идентификаторы
+1. Идентификаторы:
 ```scss
 #example {
   ...
 }
 ```
-2. Cелекторы тегов
+2. Cелекторы тегов:
 ```scss
 button.button {
   ...
@@ -821,26 +818,26 @@ div {
   ...
 }
 ```
-3. Универсальный селектор
+3. Универсальный селектор:
 ```scss
 * {
   ...
 }
 ```
-4. Комбинированные селекторы
+4. Комбинированные селекторы:
 ```scss
 .btn.btn--active {
   ...
 }
 ```
-5. Селекторы атрибутов
+5. Селекторы атрибутов:
 ```scss
 input[type=submit] {
   ...
 }
 ```
 
-Почему мы их не используем? Ответ: из-за увеличения специфичности и связности
+Почему мы их не используем? Ответ: из-за увеличения специфичности и связности.
 
 Использовать вложенные селекторы можно, но важно соблюдать принцип инкапсуляции: правила одного блока не должны влиять на внутренний мир другого блока.
 
@@ -852,7 +849,7 @@ input[type=submit] {
   </summary>
 
   ```scss
-  <!-- Хорошо -->
+  // Хорошо
   .list {
     ...
 
@@ -925,10 +922,10 @@ input[type=submit] {
 </details>
 
 
-При правильном использовании любые селекторы, написанные в формате BEM, должны иметь одинаковую оценку специфичности (0,1,0)
+При правильном использовании любые селекторы, написанные в формате BEM, должны иметь одинаковую оценку специфичности (0,1,0).
 
 > [!NOTE]
-> Более подробно со специфичностью в CSS можно ознакомиться [здесь](https://doka.guide/css/specificity/) (Ссылку потом поменяю)
+> Более подробно со специфичностью в CSS можно ознакомиться [здесь](https://doka.guide/css/specificity/) (Ссылку потом поменяю).
 
 <details open>
   <summary>
@@ -1012,8 +1009,8 @@ CSS-реализация:
 
 ## <a name="file-structure"></a>Структура файлов
 Файловая структура стилей следующая:
-  1. commons - папка с общими стилями, которые будут использовать точки входа
-  2. [Точка входа] - папка со стилями, точка входа которой является [Точка входа]
+  1. commons - папка с общими стилями, которые будут использовать точки входа;
+  2. [Точка входа] - папка со стилями, точка входа которой является [Точка входа].
 
 <details open>
   <summary>
@@ -1022,9 +1019,6 @@ CSS-реализация:
 
   ```text
   main/
-  |
-  |- abstracts/
-  | |- __application.sass
   |
   |- base/
   | |- __application.sass
@@ -1045,31 +1039,13 @@ CSS-реализация:
   ```
 </details>
 
-Для каждой папки создается файл __application.sass, в который импортируется все файлы папки
+Для каждой папки создается файл __cssapplication.sass, в который импортируется все файлы папки.
 
 Структура внутри этих папок:
-  1. abstracts - собраны все инструменты и помощники Sass, используемые в проекте.
-    Каждые глобальные переменные, функции, миксины и плейсхолдеры должны быть помещены сюда.
-    Правила:
-      1. Она не должна выдавать ни одной строки CSS при самостоятельной компиляции. Это не что иное, как помощники Sass.
-
-<details open>
-  <summary>
-    Пример папки abstracts
-  </summary>
-
-  ```text
-  abstracts/
-  |
-  |- __application.sass
-  |- _functions.sass
-  |- _mixins.sass
-  |- _placeholders.sass
-  |- _variables.sass
-  ```
-</details>
-
-  2. base - используется для определения стилей, которые распределяются по всему приложению (базовые стили, шрифты, хелперы и т.д)
+  1. base - папка, которая используются для двух целей:
+      1. Для определения стилей, которые распределяются по всему приложению (базовые стили, шрифты и т.д);
+      2. В нее собраны все инструменты и помощники Sass, используемые в проекте.
+        Каждые глобальные переменные, функции, миксины и плейсхолдеры должны быть помещены сюда.
 
 <details open>
   <summary>
@@ -1082,11 +1058,14 @@ CSS-реализация:
   |- __application.sass
   |- _base.sass
   |- _fonts.sass
-  |- _helpers.sass
+  |- _functions.sass
+  |- _mixins.sass
+  |- _placeholders.sass
+  |- _variables.sass
   ```
 </details>
 
-  3. components - здесь хранятся многократно используемые компоненты (btn, form, header, footer)
+  2. components - здесь хранятся многократно используемые компоненты (btn, form, header, footer).
 
 <details open>
   <summary>
@@ -1104,7 +1083,7 @@ CSS-реализация:
   ```
 </details>
 
-  4. pages - содержит стили для конкретных страниц (event-show, report-index и т.д)
+  3. pages - содержит стили для конкретных страниц (event-show, report-index и т.д).
 
 <details open>
   <summary>
@@ -1127,9 +1106,9 @@ CSS-реализация:
   ```
 </details>
 
-  5. vendors - папка со сторонними/внешними фреймворками и библиотеками (normalize, tusur_header_addons, bootstrap, jqueryUI)
+  4. vendors - папка со сторонними/внешними фреймворками и библиотеками (bootstrap, jqueryUI, normalize, tusur-header-addons).
     Правила:
-      1. Все инструменты сторонних производителей (фреймворки, библиотеки, помощники) должны быть разделены по папкам
+      1. Все инструменты сторонних производителей (фреймворки, библиотеки, помощники) должны быть разделены по папкам.
 
 <details open>
   <summary>
@@ -1139,17 +1118,17 @@ CSS-реализация:
   ```text
   vendors/
   |
-  |- bourbon/
-  |- fontawesome/
-  |- neat/
+  |- bootstrap/
+  |- jqueryUI/
   |- normalize/
+  |- tusur-header-addons/
   |
   |- __application.sass
   ```
 </details>
 
-  6. vendors-redefine - используется для переопределения стилей сторонних библиотек
-    Например, vendors-redefine/_bootstrap.scss - это файл, содержащий все правила CSS, предназначенные для повторного объявления некоторых CSS Bootstrap по умолчанию. Это сделано для того, чтобы избежать редактирования самих файлов поставщиков, что, как правило, не является хорошей идеей
+  5. vendors-redefine - используется для переопределения стилей сторонних библиотек.
+    Например, vendors-redefine/_bootstrap.scss - это файл, содержащий все правила CSS, предназначенные для повторного объявления некоторых CSS Bootstrap по умолчанию. Это сделано для того, чтобы избежать редактирования самих файлов поставщиков, что, как правило, не является хорошей идеей.
 
 <details open>
   <summary>
@@ -1159,50 +1138,62 @@ CSS-реализация:
   ```text
   vendors-redefine/
   |
+  |- bootstrap
+  | |- _bootstrap.sass
+  |
+  |- jquery-ui/
+  | |- _jquery-ui.sass
+  |
   |- __application.sass
-  |- _bootstrap.sass
-  |- _jquery-ui.sass
   ```
 </details>
 
-  7. application.sass - для импорта всех наших стилей из других папок.
+  6. application.sass - для импорта всех наших стилей из других папок.
 
-Ниже представлен пример файловой структуры
+Ниже представлены примеры файловой структуры:
 
-<details open>
+<details>
   <summary>
     Пример файловой структуры с папками main и commons
   </summary>
 
   ```text
   commons/
-  |
-  |- abstracts
-  |   |- __application.sass
-  |   |- _mixins.sass
-  |   |- _variables.sass
-  |
   |- base
-  |   |- __application.sass
-  |   |- _base.sass
-  |   |- _fonts.sass
+  | |- __application.sass
+  | |- _base.sass
+  | |- _fonts.sass
+  | |- _mixins.sass
+  | |- _variables.sass
+  |
+  |- components
+  | |- __application.sass
+  |	|- _button.sass
+  | |- _card.sass
+  | |- _footer.sass
+  | |- _header.sass
+  |
+  |- vendors
+  | |- bootstrap/
+  | | |- _bootstrap.sass
+  | |
+  | |- normalize/
+  | | |- _normalize.sass
+  | |
+  | |- tusur-header-addons/
+  | | |- _tusur-header-addons.sass
+  | |
+  | |- __application.sass
+  |
   |
   |- application.sass
 
   main/
   |
-  |- abstracts/
+  |- base/
   | |- __application.sass
-  |	|- _fonts.sass
   |	|- _mixins.sass
   |	|- _variables.sass
-  |
-  |- components/
-  | |- __application.sass
-  |	|- _button.sass
-  |	|- _input.sass
-  |	|- _modal.sass
-  | |- _header.sass
   |
   |- pages/
   | |- event/
@@ -1211,16 +1202,15 @@ CSS-реализация:
   | | |- _event-show.sass
   | |
   | |- report/
-  | | |- _event-edit.sass
-  | | |- _event-show.sass
+  | | |- _report-edit.sass
+  | | |- _report-show.sass
   | |
   | |- __application.sass
   |
   |- vendors/
   |	|- bourbon/
   |	|- fontawesome/
-  |	|- neat/
-  |	|- normalize/
+  | |
   | |- __application.sass
   |
   |- vendors-redefine/
@@ -1230,23 +1220,49 @@ CSS-реализация:
   | |- __application.sass
   |
   |- application.sass
+
+  manage/
+  |
+  |- base/
+  | |- __application.sass
+  | |- _variables.sass
+  |
+  |- pages/
+  | |- state/
+  | | |- _state-edit.sass
+  | | |- _state-show.sass
+  | | |- _state-index.sass
+  | |
+  | |- report/
+  | | |- _report-edit.sass
+  | | |- _report-show.sass
+  | | |- _report-index.sass
+  | |
+  | |- __application.sass
+  |
+  |- components/
+  | |- __application.sass
+  | |- _form.sass
+  | |- _control.sass
+  |
+  |- application.sass
   ```
 </details>
 
-<details open>
+<details>
   <summary>
-    Пример __application.sass папки main/components
+    Пример __application.sass папки commons/components
   </summary>
 
   ```scss
   @import './button'
-  @import './input'
-  @import './modal'
+  @import './card'
+  @import './footer'
   @import './header'
   ```
 </details>
 
-<details open>
+<details>
   <summary>
     Пример application.sass папки main
   </summary>
@@ -1255,8 +1271,8 @@ CSS-реализация:
   // Commons
   @import '../commons/application'
 
-  // Abstracts
-  @import './abstracts/_application'
+  // Base
+  @import './base/_application'
 
   // Vendors
   @import './vendors/_application'
@@ -1264,13 +1280,10 @@ CSS-реализация:
   // Vendors-redefine
   @import './vendors-redefine/_application'
 
-  // Theme
-  @import './themes/_application'
-
   // Components
   @import './components/_application'
 
-  // Layouts
+  // Pages
   @import './pages/_application'
   ```
 </details>
