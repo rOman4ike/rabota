@@ -1085,16 +1085,15 @@ CSS-реализация:
   |- pages/
   | |
   | |- event/
-  | |   |- _event-edit.sass
-  | |   |- _event-index.sass
-  | |   |- _event-show.sass
+  | | |- _event-edit.sass
+  | | |- _event-index.sass
+  | | |- _event-show.sass
   | |
   | |- report/
-  | |   |- _report-edit.sass
-  | |   |- _report-show.sass
+  | | |- _report-edit.sass
+  | | |- _report-show.sass
   |
   |- componenents/
-  | |
   | |- _banner_rosbank.sass
   |
   |- __application.sass
