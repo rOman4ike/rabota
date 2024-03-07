@@ -7,8 +7,10 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const Dotenv = require('dotenv-webpack')
 const TerserPlugin = require("terser-webpack-plugin");
 
-
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 module.exports = (env) => {
   // const mode = (env.production ? 'production' : 'development')
@@ -78,6 +80,7 @@ module.exports = (env) => {
       // new webpack.AutomaticPrefetchPlugin()
       new WebpackManifestPlugin(),
       new webpack.HotModuleReplacementPlugin(),
+      new BundleAnalyzerPlugin()
     ],
   }
 }

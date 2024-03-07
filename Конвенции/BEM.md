@@ -1,10 +1,3 @@
-# Вопросы
-  1. Оставляем-ли папку abstracts?
-  2. Переименовываем-ли __application.sass
-  3. Как лучше писать модификатор: "card--theme--dark" или "card--theme-dark"
-  4. Названия файлов пишем через - "tusur-header-addons" или "tusur_header_addons"
-  5. "reports-search__field-state", "reports-search__field-participant_type" - что будем такую штуку использовать?
-
 # БЭМ
 
 ## Содержание
@@ -282,10 +275,6 @@
     height: $font-size;
     background-color: antiquewhite;
     border-radius: 100%;
-
-    &--highlighted {
-      background-color: yellow;
-    }
   }
   ```
 </details>
@@ -1026,7 +1015,7 @@ CSS-реализация:
   |- components/
   | |- __application.sass
   |
-  |- pages/
+  |- temp/
   | |- __application.sass
   |
   |- vendors/
@@ -1039,7 +1028,7 @@ CSS-реализация:
   ```
 </details>
 
-Для каждой папки создается файл __cssapplication.sass, в который импортируется все файлы папки.
+Для каждой папки создается файл __application.sass, в который импортируется все файлы папки.
 
 Структура внутри этих папок:
   1. base - папка, которая используются для двух целей:
@@ -1083,24 +1072,30 @@ CSS-реализация:
   ```
 </details>
 
-  3. pages - содержит стили для конкретных страниц (event-show, report-index и т.д).
+  3. temp - содержит временные стили, которые используются только единожды, и сосуществуют только совместно с одним html-элементом (папка components) / страницей (папка pages)
 
 <details open>
   <summary>
-    Пример папки pages
+    Пример папки temp
   </summary>
 
   ```text
-  pages/
+  temp/
   |
-  |- event/
-  |   |- _event-edit.sass
-  |   |- _event-index.sass
-  |   |- _event-show.sass
+  |- pages/
+  | |
+  | |- event/
+  | |   |- _event-edit.sass
+  | |   |- _event-index.sass
+  | |   |- _event-show.sass
+  | |
+  | |- report/
+  | |   |- _report-edit.sass
+  | |   |- _report-show.sass
   |
-  |- report/
-  |   |- _event-edit.sass
-  |   |- _event-show.sass
+  |- componenents/
+  | |
+  | |- _banner_rosbank.sass
   |
   |- __application.sass
   ```
@@ -1195,15 +1190,9 @@ CSS-реализация:
   |	|- _mixins.sass
   |	|- _variables.sass
   |
-  |- pages/
-  | |- event/
-  | | |- _event-edit.sass
-  | | |- _event-index.sass
-  | | |- _event-show.sass
-  | |
-  | |- report/
-  | | |- _report-edit.sass
-  | | |- _report-show.sass
+  |- temp/
+  | |- components/
+  | | |- _banner.sass
   | |
   | |- __application.sass
   |
@@ -1284,17 +1273,11 @@ CSS-реализация:
   @import './components/_application'
 
   // Pages
-  @import './pages/_application'
+  @import './temp/_application'
   ```
 </details>
 
-# Для себя
+## Полезные ссылки
 
-## Ссылки [Доволен?!]
 1. https://nicothin.pro/idiomatic-pre-CSS/#bem-elem - максимально короткое объяснение БЭМа
 2. https://github.com/yoksel/common-words <br> https://github.com/nicothin/idiomatic-pre-CSS/blob/gh-pages/words_and_abbreviations.md - если сложно придумать название для класса
-
-
-4. https://gist.github.com/radist2s/0b74fb70d3cf4cc4a9baaf72921f2d41
-5. https://openclassrooms.com/en/courses/5625786-produce-maintainable-css-with-sass/6009176-use-bem-selectors-with-sass
-6. https://gist.github.com/zoxon/6e32de9f0e43910a79df
